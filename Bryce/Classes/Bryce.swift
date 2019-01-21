@@ -29,12 +29,23 @@ public struct Bryce {
         
         public let baseUrl: URL
         
+        public let requestEncoder: JSONEncoder
+        
+        public let responseDecoder: JSONDecoder
+        
         public let logOptions: LogOptions
         
-        public init(baseUrl: URL, logOptions: LogOptions = []) {
+        public init(
+            baseUrl: URL,
+            requestEncoder: JSONEncoder = JSONEncoder(),
+            responseDecoder: JSONDecoder = JSONDecoder(),
+            logOptions: LogOptions = []
+        ) {
             
-            self.baseUrl =      baseUrl
-            self.logOptions =   logOptions
+            self.baseUrl =          baseUrl
+            self.requestEncoder =   requestEncoder
+            self.responseDecoder =  responseDecoder
+            self.logOptions =       logOptions
         }
     }
     
