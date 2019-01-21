@@ -18,6 +18,7 @@
 		AE9DA643248473979772C50EBDF13D12 /* Pods-Bryce_Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F649FFF9FE5F2BA7C2CF0BAB4DDEC33 /* Pods-Bryce_Tests-dummy.m */; };
 		E4307BD79A65B090F71C225E58CDE6DA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5A16F4CFC63FAC439D7A04994F579A03 /* Foundation.framework */; };
 		F3303C1B21F5465C001F92B9 /* Bryce.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3303C1A21F5465C001F92B9 /* Bryce.swift */; };
+		F3303C1D21F5E33C001F92B9 /* BRSessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3303C1C21F5E33C001F92B9 /* BRSessionDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,6 +73,7 @@
 		EC6CF2DF5E9768B283CF46979ED71A6E /* Pods-Bryce_Tests-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Bryce_Tests-frameworks.sh"; sourceTree = "<group>"; };
 		EFFC4D5041DB1234707965F9F961932A /* Pods-Bryce_Example-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Bryce_Example-resources.sh"; sourceTree = "<group>"; };
 		F3303C1A21F5465C001F92B9 /* Bryce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Bryce.swift; path = Bryce/Classes/Bryce.swift; sourceTree = "<group>"; };
+		F3303C1C21F5E33C001F92B9 /* BRSessionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BRSessionDelegate.swift; path = Bryce/Classes/BRSessionDelegate.swift; sourceTree = "<group>"; };
 		F5CB242606BDF89BAB6FD50DA0933DEA /* Pods_Bryce_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Bryce_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7C1999534C6DF55EB7C1CDF92ECC281 /* Pods-Bryce_Example-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-Bryce_Example-dummy.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -204,6 +206,7 @@
 			isa = PBXGroup;
 			children = (
 				F3303C1A21F5465C001F92B9 /* Bryce.swift */,
+				F3303C1C21F5E33C001F92B9 /* BRSessionDelegate.swift */,
 				83533C1C9E609AEC59A6AE155B5DBF26 /* ReplaceMe.swift */,
 				7C9866E58794C4F90CCD0ABEDD0378F6 /* Pod */,
 				BBDC40CDD1EC2838BD0857EAC33563D8 /* Support Files */,
@@ -395,6 +398,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F3303C1B21F5465C001F92B9 /* Bryce.swift in Sources */,
+				F3303C1D21F5E33C001F92B9 /* BRSessionDelegate.swift in Sources */,
 				63422FC917AE7A315C2DAEF1F59BEB35 /* Bryce-dummy.m in Sources */,
 				53AE01517E25B6BC9D7CABA9B2F2D599 /* ReplaceMe.swift in Sources */,
 			);

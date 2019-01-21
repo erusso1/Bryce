@@ -25,6 +25,13 @@ public struct Bryce {
         public init(rawValue: Int) { self.rawValue = rawValue }
     }
     
+    public enum SecurityPolicy {
+        
+        case none
+        
+        case certifcatePinning(path: URL)
+    }
+    
     public struct Configuration {
         
         public let baseUrl: URL
@@ -33,18 +40,22 @@ public struct Bryce {
         
         public let responseDecoder: JSONDecoder
         
+        public let securityPolicy: SecurityPolicy
+        
         public let logOptions: LogOptions
         
         public init(
             baseUrl: URL,
             requestEncoder: JSONEncoder = JSONEncoder(),
             responseDecoder: JSONDecoder = JSONDecoder(),
+            securityPolicy: SecurityPolicy = .none,
             logOptions: LogOptions = []
         ) {
             
             self.baseUrl =          baseUrl
             self.requestEncoder =   requestEncoder
             self.responseDecoder =  responseDecoder
+            self.securityPolicy =   securityPolicy
             self.logOptions =       logOptions
         }
     }
@@ -72,7 +83,24 @@ public struct Bryce {
         }
     }
     
-    public static var configuration: Configuration!
+    public static var configuration: Configuration! {
+        
+        didSet {
+            
+            switch configuration.securityPolicy {
+                
+            case .none: session = URLSession.shared
+            case .certifcatePinning:
+                session = URLSession(
+                    configuration: .ephemeral,
+                    delegate: BRSessionDelegate(),
+                    delegateQueue: nil
+                )
+            }
+        }
+    }
     
     public static var authorization: Authorization?
+    
+    internal static var session: URLSession!
 }
