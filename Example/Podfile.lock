@@ -1,0 +1,16 @@
+PODS:
+  - Bryce (0.1.0)
+
+DEPENDENCIES:
+  - Bryce (from `../`)
+
+EXTERNAL SOURCES:
+  Bryce:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  Bryce: facf23d0e55ef6a49eba5a4c3d5c13f9606cc5a9
+
+PODFILE CHECKSUM: d2f09dcba616ea124d1ceb2acfcc1cda3d0607c2
+
+COCOAPODS: 1.5.3

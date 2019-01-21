@@ -6,23 +6,25 @@ class Tests: XCTestCase {
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
+        
+        Bryce.configuration = .init(baseUrl: URL(string: "https://api.yelp.com")!, logOptions: .debug)
     }
-    
+
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        XCTAssert(true, "Pass")
+    func testBasicAuthenticationHeaders() {
+        
+        let auth = Bryce.Authorization.basic(username: "jdoe123", password: "Password123")
+        XCTAssertEqual(auth.headers, ["Authorization" : "Basic amRvZTEyMzpQYXNzd29yZDEyMw=="])
     }
     
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure() {
-            // Put the code you want to measure the time of here.
-        }
+    func testBearerAuthenticationHeaders() {
+        
+        let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+        let auth = Bryce.Authorization.bearer(token: token)
+        XCTAssertEqual(auth.headers, ["Authorization" : "Bearer \(token)"])
     }
-    
 }

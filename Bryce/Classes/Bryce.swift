@@ -1,0 +1,67 @@
+//
+//  Bryce.swift
+//  Bryce
+//
+//  Created by Ephraim Russo on 1/20/19.
+//
+
+import Foundation
+
+public struct Bryce {
+    
+    public struct LogOptions: OptionSet {
+        
+        public static let requestEndpoint = LogOptions(rawValue: 1 << 0)
+        public static let requestHeaders =  LogOptions(rawValue: 1 << 1)
+        public static let requestBody =     LogOptions(rawValue: 1 << 2)
+        public static let responseHeaders = LogOptions(rawValue: 1 << 3)
+        public static let responseBody =    LogOptions(rawValue: 1 << 4)
+        
+        public static let all: LogOptions =     [.requestEndpoint, .requestHeaders, .requestBody, .responseHeaders, .responseBody]
+        public static let debug: LogOptions =   [.requestEndpoint, .requestBody, .responseBody]
+        
+        public let rawValue: Int
+        
+        public init(rawValue: Int) { self.rawValue = rawValue }
+    }
+    
+    public struct Configuration {
+        
+        public let baseUrl: URL
+        
+        public let logOptions: LogOptions
+        
+        public init(baseUrl: URL, logOptions: LogOptions = []) {
+            
+            self.baseUrl =      baseUrl
+            self.logOptions =   logOptions
+        }
+    }
+    
+    public enum Authorization {
+        
+        case basic(username: String, password: String)
+        
+        case bearer(token: String)
+        
+        public var headers: [String : String] {
+            
+            switch self {
+                
+            case .basic(let username, let password):
+                
+                let token = (username + ":" + password).data(using: .utf8)!.base64EncodedString()
+                
+                return ["Authorization" : "Basic \(token)"]
+            
+            case .bearer(let token):
+                
+                return ["Authorization" : "Bearer \(token)"]
+            }
+        }
+    }
+    
+    public static var configuration: Configuration!
+    
+    public static var authorization: Authorization?
+}
