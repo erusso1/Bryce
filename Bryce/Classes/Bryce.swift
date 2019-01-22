@@ -42,6 +42,8 @@ public struct Bryce {
         
         public let securityPolicy: SecurityPolicy
         
+        public let timeout: TimeInterval
+        
         public let logOptions: LogOptions
         
         public init(
@@ -49,6 +51,7 @@ public struct Bryce {
             requestEncoder: JSONEncoder = JSONEncoder(),
             responseDecoder: JSONDecoder = JSONDecoder(),
             securityPolicy: SecurityPolicy = .none,
+            timeout: TimeInterval = 5.0,
             logOptions: LogOptions = []
         ) {
             
@@ -56,6 +59,7 @@ public struct Bryce {
             self.requestEncoder =   requestEncoder
             self.responseDecoder =  responseDecoder
             self.securityPolicy =   securityPolicy
+            self.timeout =          timeout
             self.logOptions =       logOptions
         }
     }
@@ -93,7 +97,7 @@ public struct Bryce {
             case .certifcatePinning:
                 session = URLSession(
                     configuration: .ephemeral,
-                    delegate: BRSessionDelegate(),
+                    delegate: SessionDelegate(),
                     delegateQueue: nil
                 )
             }

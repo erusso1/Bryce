@@ -7,9 +7,12 @@
 
 import Foundation
 
-internal final class BRSessionDelegate: NSObject { }
+extension Bryce {
+    
+    final class SessionDelegate: NSObject { }
+}
 
-extension BRSessionDelegate: URLSessionDelegate {
+extension Bryce.SessionDelegate: URLSessionDelegate {
     
     func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
         
@@ -36,6 +39,19 @@ extension BRSessionDelegate: URLSessionDelegate {
     }
 }
 
+private extension Bryce {
+    
+    static func pinnedCertificate() -> SecCertificate?  {
+        
+        switch configuration.securityPolicy {
+        case .none: return nil
+        case .certifcatePinning(let path):
+            guard let data = try? Data(contentsOf: path) as CFData else { return nil }
+            return SecCertificateCreateWithData(nil, data)
+        }
+    }
+}
+
 private extension SecTrust {
     
     var certificateCount: Int { return Int(SecTrustGetCertificateCount(self)) }
@@ -56,18 +72,5 @@ private extension SecCertificate {
         guard let trustOutput = trust, trustCreationStatus == errSecSuccess else { return nil }
         
         return SecTrustCopyPublicKey(trustOutput)
-    }
-}
-
-private extension Bryce {
-    
-    static func pinnedCertificate() -> SecCertificate?  {
-        
-        switch configuration.securityPolicy {
-        case .none: return nil
-        case .certifcatePinning(let path):
-            guard let data = try? Data(contentsOf: path) as CFData else { return nil }
-            return SecCertificateCreateWithData(nil, data)
-        }
     }
 }
