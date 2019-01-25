@@ -1,9 +1,15 @@
 use_frameworks!
+platform :ios, '10.0'
 
-target 'Bryce_Example' do
-  pod 'Bryce', :path => '../'
+target 'BryceNetworking_Example' do
+  pod 'BryceNetworking', :path => '../'
+  pod 'BryceNetworking/Promises', :path => '../'
+  
+  pod 'PromiseKit'
+  pod 'PromiseKit/Alamofire'
+  pod 'CodableAlamofire'
 
-  target 'Bryce_Tests' do
+  target 'BryceNetworking_Tests' do
     inherit! :search_paths
 
     
