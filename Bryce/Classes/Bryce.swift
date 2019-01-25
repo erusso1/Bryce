@@ -104,7 +104,25 @@ public struct Bryce {
         }
     }
     
-    public static var authorization: Authorization?
+    public static var authorization: Authorization? {
+        
+        didSet {
+            
+            if let auth = authorization {
+                
+                guard var headers = self.session.configuration.httpAdditionalHeaders else {
+                    
+                    self.session.configuration.httpAdditionalHeaders = auth.headers
+                    
+                    return
+                }
+                
+                auth.headers.forEach { key, value in headers[key] = value }
+            }
+            
+            else { oldValue?.headers.forEach { key, _ in session.configuration.httpAdditionalHeaders?[key] = nil } }
+        }
+    }
     
     internal static var session: URLSession!
 }
