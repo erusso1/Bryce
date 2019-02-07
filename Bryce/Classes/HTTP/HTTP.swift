@@ -19,7 +19,7 @@ extension Bryce {
     
     public func request(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: Parameters? = nil, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping JSONResponse) {
         
-        Bryce.shared.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers).validate().responseJSON(queue: Bryce.shared.configuration.responseQueue) { alamofireResponse in
+        self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers ?? self.authorization?.headers).validate().responseJSON(queue: self.configuration.responseQueue) { alamofireResponse in
             
             let json = alamofireResponse.result.value as? [String : Any]
             let error = alamofireResponse.result.error
@@ -30,7 +30,7 @@ extension Bryce {
     
     public func request(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: Parameters? = nil, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping JSONArrayResponse) {
         
-        Bryce.shared.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers).validate().responseJSON(queue: Bryce.shared.configuration.responseQueue) { alamofireResponse in
+        self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers ?? self.authorization?.headers).validate().responseJSON(queue: self.configuration.responseQueue) { alamofireResponse in
             
             let array = alamofireResponse.result.value as? Array<[String : Any]>
             let error = alamofireResponse.result.error
@@ -41,7 +41,7 @@ extension Bryce {
     
     public func request<D: Decodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: Parameters? = nil, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping DecodableResponse<D>) {
         
-        Bryce.shared.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers).validate().responseDecodableObject(queue: Bryce.shared.configuration.responseQueue, decoder: Bryce.shared.configuration.responseDecoder) { (alamofireResponse: DataResponse<D>) in
+        self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers ?? self.authorization?.headers).validate().responseDecodableObject(queue: self.configuration.responseQueue, decoder: self.configuration.responseDecoder) { (alamofireResponse: DataResponse<D>) in
             
             let decodable = alamofireResponse.result.value
             let error = alamofireResponse.result.error
@@ -54,7 +54,7 @@ extension Bryce {
         
         do {
             
-            let data = try Bryce.shared.configuration.requestEncoder.encode(parameters)
+            let data = try self.configuration.requestEncoder.encode(parameters)
             
             guard let params = try JSONSerialization.jsonObject(with: data, options: []) as? [String : Any] else { throw EncodingError.invalidValue(parameters, .init(codingPath: [], debugDescription: "Unable to encode parameters: \(parameters)")) }
             

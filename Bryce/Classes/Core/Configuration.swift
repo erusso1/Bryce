@@ -9,7 +9,7 @@ import Foundation
 import Alamofire
 import AlamofireNetworkActivityLogger
 
-public struct Configuration {
+public class Configuration: NSObject {
     
     public let baseUrl: URL
     

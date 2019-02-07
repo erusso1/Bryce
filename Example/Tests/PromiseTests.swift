@@ -2,7 +2,7 @@ import XCTest
 import BryceNetworking
 import PromiseKit
 
-class Tests: XCTestCase {
+class PromiseTests: XCTestCase {
     
     var timeout: TimeInterval = 500
     
@@ -20,12 +20,44 @@ class Tests: XCTestCase {
 
 // MARK: Authentication
 
-extension Tests {
+extension PromiseTests {
     
     func testBasicAuthenticationHeaders() {
         
         let auth: Authorization = .basic(username: "jdoe123", password: "Password123")
         XCTAssertEqual(auth.headers, ["Authorization" : "Basic amRvZTEyMzpQYXNzd29yZDEyMw=="])
+        
+        let baseURL = URL(string: "https://jsonplaceholder.typicode.com")!
+        let expectation = XCTestExpectation(description: "Basic authentication expectation.")
+        
+        Bryce.shared.use(Configuration.init(
+            baseUrl: baseURL,
+            securityPolicy: .none,
+            logLevel: .debug)
+        )
+        
+        Bryce.shared.authorization = auth
+        
+        let endpoint = Endpoint(components: "posts", "1")
+        
+        firstly {
+            
+            Bryce.shared.request(on: endpoint, responseType: Post.self)
+            }.get { post in
+                
+                print("Successfully retreived post: \(post)")
+                XCTAssertEqual(post.title, "sunt aut facere repellat provident occaecati excepturi optio reprehenderit")
+            }.catch { error in
+                
+                print("An error occurred: \(error)")
+                XCTAssert(false)
+                
+            }.finally {
+                
+                expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: timeout)
     }
     
     func testBearerAuthenticationHeaders() {
@@ -33,12 +65,44 @@ extension Tests {
         let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
         let auth: Authorization = .bearer(token: token)
         XCTAssertEqual(auth.headers, ["Authorization" : "Bearer \(token)"])
+        
+        let baseURL = URL(string: "https://jsonplaceholder.typicode.com")!
+        let expectation = XCTestExpectation(description: "Basic authentication expectation.")
+        
+        Bryce.shared.use(Configuration.init(
+            baseUrl: baseURL,
+            securityPolicy: .none,
+            logLevel: .debug)
+        )
+        
+        Bryce.shared.authorization = auth
+        
+        let endpoint = Endpoint(components: "posts", "1")
+        
+        firstly {
+            
+            Bryce.shared.request(on: endpoint, responseType: Post.self)
+            }.get { post in
+                
+                print("Successfully retreived post: \(post)")
+                XCTAssertEqual(post.title, "sunt aut facere repellat provident occaecati excepturi optio reprehenderit")
+            }.catch { error in
+                
+                print("An error occurred: \(error)")
+                XCTAssert(false)
+                
+            }.finally {
+                
+                expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: timeout)
     }
 }
 
 // MARK: Certificate Pinning
 
-extension Tests {
+extension PromiseTests {
     
     func testValidCertificatePinning() {
         
@@ -152,7 +216,7 @@ extension Tests {
 
 // MARK: Parameter Encoding
 
-extension Tests {
+extension PromiseTests {
     
     func testQueryParamEncoding() {
         
@@ -202,4 +266,3 @@ extension Tests {
         wait(for: [expectation], timeout: timeout)
     }
 }
-

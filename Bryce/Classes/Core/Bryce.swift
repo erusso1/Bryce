@@ -7,6 +7,7 @@
 
 import Foundation
 import Alamofire
+import AlamofireNetworkActivityLogger
 
 public typealias JSON = [String : Any]
 
@@ -14,25 +15,36 @@ public final class Bryce: NSObject {
     
     public static let shared = Bryce()
     
+    public override init() {
+        super.init()
+        
+        NetworkActivityLogger.shared.startLogging()
+    }
+    
     public func use(_ config: Configuration) { configuration = config }
     
     public func authenticate(_ auth: Authorization) { authorization = auth }
     
     public func logout() { authorization = nil }
     
+    private var serverTrustPolicyManager: ServerTrustPolicyManager?
+    
     internal var configuration: Configuration! {
         
         didSet {
+            
+            NetworkActivityLogger.shared.level = configuration.logLevel            
             
             switch configuration!.securityPolicy {
             case .none: break
             case .certifcatePinning:
                 
+                self.serverTrustPolicyManager = ServerTrustPolicyManager(policies: [configuration.baseUrl.host!: ServerTrustPolicy.pinPublicKeys(publicKeys: ServerTrustPolicy.publicKeys(), validateCertificateChain: true, validateHost: true)])
+                
                 configuration.sessionManager = Alamofire.SessionManager(
                     configuration: .ephemeral,
                     delegate: CertificatePinningSessionDelegate(),
-                    serverTrustPolicyManager: ServerTrustPolicyManager(policies: [configuration.baseUrl.host!: ServerTrustPolicy.pinPublicKeys(publicKeys: ServerTrustPolicy.publicKeys(), validateCertificateChain: true, validateHost: true) ])
-                )
+                    serverTrustPolicyManager: self.serverTrustPolicyManager)
             }
         }
     }
@@ -41,18 +53,9 @@ public final class Bryce: NSObject {
         
         didSet {
             
-            guard var configuration = configuration else { return }
+            guard self.configuration != nil else { return }
             
-            let manager = configuration.sessionManager
-            let config = manager.session.configuration
             
-            config.httpAdditionalHeaders = authorization?.headers
-            
-            configuration.sessionManager = Alamofire.SessionManager(
-                configuration: config,
-                delegate: manager.delegate,
-                serverTrustPolicyManager: nil
-            )
         }
     }
 }

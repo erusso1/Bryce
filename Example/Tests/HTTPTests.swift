@@ -23,16 +23,62 @@ class HTTPTests: XCTestCase {
 extension HTTPTests {
 
     func testBasicAuthenticationHeaders() {
-
+        
         let auth: Authorization = .basic(username: "jdoe123", password: "Password123")
         XCTAssertEqual(auth.headers, ["Authorization" : "Basic amRvZTEyMzpQYXNzd29yZDEyMw=="])
+        
+        let baseURL = URL(string: "https://jsonplaceholder.typicode.com")!
+        let expectation = XCTestExpectation(description: "Basic authentication expectation.")
+        
+        Bryce.shared.use(Configuration.init(
+            baseUrl: baseURL,
+            securityPolicy: .none,
+            logLevel: .debug)
+        )
+        
+        Bryce.shared.authorization = auth
+        
+        let endpoint = Endpoint(components: "posts", "1")
+        
+        Bryce.shared.request(on: endpoint) { (post: Post?, error: Error?) in
+            
+            XCTAssertNil(error)
+            XCTAssertNotNil(post)
+            
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: timeout)
     }
-
+    
     func testBearerAuthenticationHeaders() {
-
+        
         let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
         let auth: Authorization = .bearer(token: token)
         XCTAssertEqual(auth.headers, ["Authorization" : "Bearer \(token)"])
+        
+        let baseURL = URL(string: "https://jsonplaceholder.typicode.com")!
+        let expectation = XCTestExpectation(description: "Basic authentication expectation.")
+        
+        Bryce.shared.use(Configuration.init(
+            baseUrl: baseURL,
+            securityPolicy: .none,
+            logLevel: .debug)
+        )
+        
+        Bryce.shared.authorization = auth
+        
+        let endpoint = Endpoint(components: "posts", "1")
+        
+        Bryce.shared.request(on: endpoint) { (post: Post?, error: Error?) in
+            
+            XCTAssertNil(error)
+            XCTAssertNotNil(post)
+            
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: timeout)
     }
 }
 
@@ -156,4 +202,3 @@ extension HTTPTests {
         }
     }
 }
-

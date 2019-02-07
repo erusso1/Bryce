@@ -40,6 +40,11 @@ public struct RouteComponent {
     private init(string: String) { self.string = string }
 }
 
+extension RouteComponent {
+    
+    public static func id(_ value: String) -> RouteComponent { return RouteComponent(value)! }
+}
+
 extension RouteComponent: LosslessStringConvertible {
     
     public init?(_ description: String) { self.init(string: description) }
