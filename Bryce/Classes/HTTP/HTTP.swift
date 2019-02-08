@@ -38,6 +38,36 @@ extension Bryce {
             response(array, error)
         }
     }
+}
+
+extension Bryce {
+    
+    public func request<E: Encodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping JSONResponse) {
+        
+        do {
+            
+            let params = try parameters.parameters(using: self.configuration.requestEncoder)
+            
+            request(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, response: response)
+        }
+            
+        catch { return response(nil, error) }
+    }
+    
+    public func request<E: Encodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping JSONArrayResponse) {
+        
+        do {
+            
+            let params = try parameters.parameters(using: self.configuration.requestEncoder)
+            
+            request(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, response: response)
+        }
+            
+        catch { return response(nil, error) }
+    }
+}
+
+extension Bryce {
     
     public func request<D: Decodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: Parameters? = nil, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping DecodableResponse<D>) {
         
@@ -54,9 +84,7 @@ extension Bryce {
         
         do {
             
-            let data = try self.configuration.requestEncoder.encode(parameters)
-            
-            guard let params = try JSONSerialization.jsonObject(with: data, options: []) as? [String : Any] else { throw EncodingError.invalidValue(parameters, .init(codingPath: [], debugDescription: "Unable to encode parameters: \(parameters)")) }
+            let params = try parameters.parameters(using: self.configuration.requestEncoder)
             
             request(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, response: response)
         }
@@ -64,4 +92,3 @@ extension Bryce {
         catch { return response(nil, error) }
     }
 }
-

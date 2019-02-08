@@ -32,6 +32,34 @@ extension Bryce {
                 data as? [JSON]
         }
     }
+}
+
+extension Bryce {
+    
+    public func request<E: Encodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil) -> Promise<JSON> {
+        
+        do {
+            let params = try parameters.parameters(using: self.configuration.requestEncoder)
+            
+            return request(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers)
+        }
+            
+        catch { return Promise(error: error) }
+    }
+    
+    public func request<E: Encodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil) -> Promise<Array<JSON>> {
+        
+        do {
+            let params = try parameters.parameters(using: self.configuration.requestEncoder)
+            
+            return request(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers)
+        }
+            
+        catch { return Promise(error: error) }
+    }
+}
+
+extension Bryce {
     
     public func request<D: Decodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: Parameters? = nil, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, responseType: D.Type) -> Promise<D> {
         
@@ -41,9 +69,7 @@ extension Bryce {
     public func request<E: Encodable, D: Decodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, responseType: D.Type) -> Promise<D> {
         
         do {
-            let data = try self.configuration.requestEncoder.encode(parameters)
-            
-            guard let params = try JSONSerialization.jsonObject(with: data, options: []) as? [String : Any] else { throw EncodingError.invalidValue(parameters, .init(codingPath: [], debugDescription: "Unable to encode parameters: \(parameters)")) }
+            let params = try parameters.parameters(using: self.configuration.requestEncoder)
             
             return request(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, responseType: responseType)
         }
