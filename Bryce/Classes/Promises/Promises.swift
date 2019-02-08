@@ -11,6 +11,15 @@ import PromiseKit
 
 extension Bryce {
     
+    public func request(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: Parameters? = nil, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil) -> Promise<Void> {
+        
+        return firstly {
+            
+            self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers ?? self.authorization?.headers).validate().response(.promise, queue: self.configuration.responseQueue)
+            
+            }.done { _ in }
+    }
+    
     public func request(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: Parameters? = nil, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil) -> Promise<JSON> {
         
         return firstly {

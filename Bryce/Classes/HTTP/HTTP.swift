@@ -9,6 +9,8 @@ import Foundation
 import Alamofire
 import CodableAlamofire
 
+public typealias ErrorResponse = (Error?) -> Void
+
 public typealias JSONResponse = (JSON?, Error?) -> Void
 
 public typealias JSONArrayResponse = (Array<JSON>?, Error?) -> Void
@@ -16,6 +18,16 @@ public typealias JSONArrayResponse = (Array<JSON>?, Error?) -> Void
 public typealias DecodableResponse<D: Decodable> = (D?, Error?) -> Void
 
 extension Bryce {
+    
+    public func request(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: Parameters? = nil, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping ErrorResponse) {
+        
+        self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers ?? self.authorization?.headers).validate().response(queue: self.configuration.responseQueue) { alamofireResponse in
+            
+            let error = alamofireResponse.error
+            
+            response(error)
+        }
+    }
     
     public func request(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: Parameters? = nil, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping JSONResponse) {
         
@@ -41,6 +53,18 @@ extension Bryce {
 }
 
 extension Bryce {
+    
+    public func request<E: Encodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping ErrorResponse) {
+        
+        do {
+            
+            let params = try parameters.parameters(using: self.configuration.requestEncoder)
+            
+            request(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, response: response)
+        }
+            
+        catch { return response(error) }
+    }
     
     public func request<E: Encodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping JSONResponse) {
         
