@@ -8,24 +8,30 @@
 import Alamofire
 import Foundation
 
-public enum Authorization {
+public class Authorization: NSObject, Codable {
     
-    case basic(username: String, password: String)
+    public let headerValue: String
     
-    case bearer(token: String)
+    public let headerKey = "Autorization"
     
-    public var headerValue: String {
+    public init(headerValue: String) {
+        self.headerValue = headerValue
+        super.init()
+    }
+}
+
+extension Authorization {
+    
+    public static func basic(username: String, password: String) -> Authorization {
         
-        switch self {
-        case .basic(let username, let password):
-            
-            let token = (username + ":" + password).data(using: .utf8)!.base64EncodedString()
-            return "Basic \(token)"
-            
-        case .bearer(let token):
-            return "Bearer \(token)"
-        }
-    }    
+        let token = (username + ":" + password).data(using: .utf8)!.base64EncodedString()
+        return Authorization(headerValue: "Basic \(token)")
+    }
+    
+    public static func bearer(token: String) -> Authorization {
+        
+        return Authorization(headerValue: "Bearer \(token)")
+    }
 }
 
 final class AuthorizationAdapter: RequestAdapter {

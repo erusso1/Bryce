@@ -46,7 +46,7 @@ public final class Bryce: NSObject {
         }
     }
     
-    public var authorization: Authorization? {
+    @objc dynamic public var authorization: Authorization? {
         
         didSet {
             

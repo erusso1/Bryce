@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'BryceNetworking'
-  s.version          = '1.0.4'
+  s.version          = '1.1.0'
   s.summary          = 'Bryce is a simplified URLSession wrapper designed to make HTTP networking easy.'
 
 # This description is used to generate tags and improve search results.
@@ -49,6 +49,14 @@ Pod::Spec.new do |s|
       http.ios.deployment_target = '10.0'
       http.watchos.deployment_target = '4.0'
       http.source_files = 'Bryce/Classes/HTTP/*.{swift}'
+      http.dependency 'BryceNetworking/Core'
+  end
+  
+  s.subspec 'Keychain' do |http|
+      
+      http.ios.deployment_target = '10.0'
+      http.watchos.deployment_target = '4.0'
+      http.source_files = 'Bryce/Classes/Keychain/*.{swift}'
       http.dependency 'BryceNetworking/Core'
   end
   
