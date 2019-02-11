@@ -15,7 +15,7 @@ extension Bryce {
         
         return firstly {
             
-            self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers ?? self.authorization?.headers).validate().response(.promise, queue: self.configuration.responseQueue)
+            self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers).validate().response(.promise, queue: self.configuration.responseQueue)
             
             }.done { _ in }
     }
@@ -24,7 +24,7 @@ extension Bryce {
         
         return firstly {
             
-            self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers ?? self.authorization?.headers).validate().responseJSON(queue: self.configuration.responseQueue)
+            self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers).validate().responseJSON(queue: self.configuration.responseQueue)
             
             }.compactMap { data, response in
                 data as? JSON
@@ -35,7 +35,7 @@ extension Bryce {
         
         return firstly {
             
-            self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers ?? self.authorization?.headers).validate().responseJSON(queue: self.configuration.responseQueue)
+            self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers).validate().responseJSON(queue: self.configuration.responseQueue)
             
             }.compactMap { data, response in
                 data as? [JSON]
@@ -72,7 +72,7 @@ extension Bryce {
     
     public func request<D: Decodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: Parameters? = nil, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, responseType: D.Type) -> Promise<D> {
         
-        return self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers ?? self.authorization?.headers).validate().responseDecodable(queue: self.configuration.responseQueue, decoder: self.configuration.responseDecoder)
+        return self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers).validate().responseDecodable(queue: self.configuration.responseQueue, decoder: self.configuration.responseDecoder)
     }
     
     public func request<E: Encodable, D: Decodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, responseType: D.Type) -> Promise<D> {

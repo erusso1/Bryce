@@ -11,6 +11,6 @@ public enum SecurityPolicy {
     
     case none
     
-    case certifcatePinning(path: URL)
+    case certifcatePinning(bundle: Bundle)
 }
 

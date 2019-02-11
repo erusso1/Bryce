@@ -19,9 +19,10 @@ public typealias DecodableResponse<D: Decodable> = (D?, Error?) -> Void
 
 extension Bryce {
     
-    public func request(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: Parameters? = nil, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping ErrorResponse) {
+    @discardableResult
+    public func request(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: Parameters? = nil, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping ErrorResponse) -> DataRequest {
         
-        self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers ?? self.authorization?.headers).validate().response(queue: self.configuration.responseQueue) { alamofireResponse in
+        return self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers).validate().response(queue: self.configuration.responseQueue) { alamofireResponse in
             
             let error = alamofireResponse.error
             
@@ -29,9 +30,10 @@ extension Bryce {
         }
     }
     
-    public func request(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: Parameters? = nil, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping JSONResponse) {
+    @discardableResult
+    public func request(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: Parameters? = nil, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping JSONResponse) -> DataRequest {
         
-        self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers ?? self.authorization?.headers).validate().responseJSON(queue: self.configuration.responseQueue) { alamofireResponse in
+        return self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers).validate().responseJSON(queue: self.configuration.responseQueue) { alamofireResponse in
             
             let json = alamofireResponse.result.value as? [String : Any]
             let error = alamofireResponse.result.error
@@ -40,9 +42,10 @@ extension Bryce {
         }
     }
     
-    public func request(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: Parameters? = nil, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping JSONArrayResponse) {
+    @discardableResult
+    public func request(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: Parameters? = nil, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping JSONArrayResponse) -> DataRequest {
         
-        self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers ?? self.authorization?.headers).validate().responseJSON(queue: self.configuration.responseQueue) { alamofireResponse in
+        return self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers).validate().responseJSON(queue: self.configuration.responseQueue) { alamofireResponse in
             
             let array = alamofireResponse.result.value as? Array<[String : Any]>
             let error = alamofireResponse.result.error
@@ -54,48 +57,37 @@ extension Bryce {
 
 extension Bryce {
     
-    public func request<E: Encodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping ErrorResponse) {
+    @discardableResult
+    public func request<E: Encodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping ErrorResponse) -> DataRequest {
         
-        do {
-            
-            let params = try parameters.parameters(using: self.configuration.requestEncoder)
-            
-            request(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, response: response)
-        }
-            
-        catch { return response(error) }
+        let params = try! parameters.parameters(using: self.configuration.requestEncoder)
+        
+        return request(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, response: response)
     }
     
-    public func request<E: Encodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping JSONResponse) {
+    @discardableResult
+    public func request<E: Encodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping JSONResponse) -> DataRequest {
         
-        do {
-            
-            let params = try parameters.parameters(using: self.configuration.requestEncoder)
-            
-            request(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, response: response)
-        }
-            
-        catch { return response(nil, error) }
+        let params = try! parameters.parameters(using: self.configuration.requestEncoder)
+        
+        return request(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, response: response)
     }
     
-    public func request<E: Encodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping JSONArrayResponse) {
+    @discardableResult
+    public func request<E: Encodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping JSONArrayResponse) -> DataRequest {
         
-        do {
-            
-            let params = try parameters.parameters(using: self.configuration.requestEncoder)
-            
-            request(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, response: response)
-        }
-            
-        catch { return response(nil, error) }
+        let params = try! parameters.parameters(using: self.configuration.requestEncoder)
+        
+        return request(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, response: response)
     }
 }
 
 extension Bryce {
     
-    public func request<D: Decodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: Parameters? = nil, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping DecodableResponse<D>) {
+    @discardableResult
+    public func request<D: Decodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: Parameters? = nil, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping DecodableResponse<D>) -> DataRequest {
         
-        self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers ?? self.authorization?.headers).validate().responseDecodableObject(queue: self.configuration.responseQueue, decoder: self.configuration.responseDecoder) { (alamofireResponse: DataResponse<D>) in
+        return self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers).validate().responseDecodableObject(queue: self.configuration.responseQueue, decoder: self.configuration.responseDecoder) { (alamofireResponse: DataResponse<D>) in
             
             let decodable = alamofireResponse.result.value
             let error = alamofireResponse.result.error
@@ -104,15 +96,11 @@ extension Bryce {
         }
     }
     
-    public func request<E: Encodable, D: Decodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping DecodableResponse<D>) {
+    @discardableResult
+    public func request<E: Encodable, D: Decodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping DecodableResponse<D>) -> DataRequest {
         
-        do {
-            
-            let params = try parameters.parameters(using: self.configuration.requestEncoder)
-            
-            request(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, response: response)
-        }
-            
-        catch { return response(nil, error) }
+        let params = try! parameters.parameters(using: self.configuration.requestEncoder)
+        
+        return request(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, response: response)
     }
 }

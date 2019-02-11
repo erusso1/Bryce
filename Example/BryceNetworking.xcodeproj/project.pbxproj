@@ -16,10 +16,10 @@
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		607FACEC1AFB9204008FA782 /* HTTPTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* HTTPTests.swift */; };
 		F3303C2621FC4BF5001F92B9 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3303C2521FC4BF5001F92B9 /* Post.swift */; };
-		F3303C2721FC5752001F92B9 /* valid_cert.crt in Resources */ = {isa = PBXBuildFile; fileRef = F3303C2021F5EC2E001F92B9 /* valid_cert.crt */; };
-		F3303C2921FC5949001F92B9 /* invalid_cert.crt in Resources */ = {isa = PBXBuildFile; fileRef = F3303C2821FC5949001F92B9 /* invalid_cert.crt */; };
 		F3303C2B21FC627F001F92B9 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3303C2A21FC627F001F92B9 /* Comment.swift */; };
 		F3AED28C220BECF400FD520F /* PromiseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AED28B220BECF400FD520F /* PromiseTests.swift */; };
+		F3E3982C2211308600019072 /* invalid_cert.crt in Resources */ = {isa = PBXBuildFile; fileRef = F3303C2821FC5949001F92B9 /* invalid_cert.crt */; };
+		F3E3982D2211324900019072 /* valid_cert.crt in Resources */ = {isa = PBXBuildFile; fileRef = F3303C2021F5EC2E001F92B9 /* valid_cert.crt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -267,9 +267,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
-				F3303C2721FC5752001F92B9 /* valid_cert.crt in Resources */,
 				607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */,
-				F3303C2921FC5949001F92B9 /* invalid_cert.crt in Resources */,
+				F3E3982C2211308600019072 /* invalid_cert.crt in Resources */,
+				F3E3982D2211324900019072 /* valid_cert.crt in Resources */,
 				607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

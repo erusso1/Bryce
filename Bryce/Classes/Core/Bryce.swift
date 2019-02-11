@@ -27,8 +27,6 @@ public final class Bryce: NSObject {
     
     public func logout() { authorization = nil }
     
-    private var serverTrustPolicyManager: ServerTrustPolicyManager?
-    
     internal var configuration: Configuration! {
         
         didSet {
@@ -37,14 +35,13 @@ public final class Bryce: NSObject {
             
             switch configuration!.securityPolicy {
             case .none: break
-            case .certifcatePinning:
+            case .certifcatePinning(let bundle):
                 
-                self.serverTrustPolicyManager = ServerTrustPolicyManager(policies: [configuration.baseUrl.host!: ServerTrustPolicy.pinPublicKeys(publicKeys: ServerTrustPolicy.publicKeys(), validateCertificateChain: true, validateHost: true)])
+                let policyManager = ServerTrustPolicyManager(policies: [configuration.baseUrl.host!: ServerTrustPolicy.pinPublicKeys(publicKeys: ServerTrustPolicy.publicKeys(in: bundle), validateCertificateChain: true, validateHost: true)])
                 
                 configuration.sessionManager = Alamofire.SessionManager(
                     configuration: .ephemeral,
-                    delegate: CertificatePinningSessionDelegate(),
-                    serverTrustPolicyManager: self.serverTrustPolicyManager)
+                    serverTrustPolicyManager: policyManager)
             }
         }
     }
@@ -55,7 +52,9 @@ public final class Bryce: NSObject {
             
             guard self.configuration != nil else { return }
             
+            guard let authorization = authorization else { configuration.sessionManager.adapter = nil; return }
             
+            configuration.sessionManager.adapter = AuthorizationAdapter(authorization: authorization)
         }
     }
 }
