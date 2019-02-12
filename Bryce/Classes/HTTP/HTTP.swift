@@ -20,87 +20,111 @@ public typealias DecodableResponse<D: Decodable> = (D?, Error?) -> Void
 extension Bryce {
     
     @discardableResult
-    public func request(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: Parameters? = nil, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping ErrorResponse) -> DataRequest {
+    public func request(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: Parameters? = nil, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, validate: Bool = false, response: @escaping ErrorResponse) -> DataRequest {
         
-        return self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers).validate().response(queue: self.configuration.responseQueue) { alamofireResponse in
+        var dataRequest = self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers)
+            
+        if validate { dataRequest = dataRequest.validate() }
+            
+        dataRequest.response(queue: self.configuration.responseQueue) { alamofireResponse in
             
             let error = alamofireResponse.error
             
             response(error)
         }
+        
+        return dataRequest
     }
     
     @discardableResult
-    public func request(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: Parameters? = nil, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping JSONResponse) -> DataRequest {
+    public func request(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: Parameters? = nil, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, validate: Bool = false, response: @escaping JSONResponse) -> DataRequest {
         
-        return self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers).validate().responseJSON(queue: self.configuration.responseQueue) { alamofireResponse in
+        var dataRequest = self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers)
+            
+        if validate { dataRequest = dataRequest.validate() }
+
+        dataRequest.responseJSON(queue: self.configuration.responseQueue) { alamofireResponse in
             
             let json = alamofireResponse.result.value as? [String : Any]
             let error = alamofireResponse.result.error
             
             response(json, error)
         }
+        
+        return dataRequest
     }
     
     @discardableResult
-    public func request(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: Parameters? = nil, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping JSONArrayResponse) -> DataRequest {
+    public func request(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: Parameters? = nil, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, validate: Bool = false, response: @escaping JSONArrayResponse) -> DataRequest {
         
-        return self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers).validate().responseJSON(queue: self.configuration.responseQueue) { alamofireResponse in
+        var dataRequest = self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers)
+            
+        if validate { dataRequest = dataRequest.validate() }
+
+        dataRequest.responseJSON(queue: self.configuration.responseQueue) { alamofireResponse in
             
             let array = alamofireResponse.result.value as? Array<[String : Any]>
             let error = alamofireResponse.result.error
             
             response(array, error)
         }
+        
+        return dataRequest
     }
 }
 
 extension Bryce {
     
     @discardableResult
-    public func request<E: Encodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping ErrorResponse) -> DataRequest {
+    public func request<E: Encodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, validate: Bool = false, response: @escaping ErrorResponse) -> DataRequest {
         
         let params = try! parameters.parameters(using: self.configuration.requestEncoder)
         
-        return request(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, response: response)
+        return request(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, validate: validate, response: response)
     }
     
     @discardableResult
-    public func request<E: Encodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping JSONResponse) -> DataRequest {
+    public func request<E: Encodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, validate: Bool = false, response: @escaping JSONResponse) -> DataRequest {
         
         let params = try! parameters.parameters(using: self.configuration.requestEncoder)
         
-        return request(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, response: response)
+        return request(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, validate: validate, response: response)
     }
     
     @discardableResult
-    public func request<E: Encodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping JSONArrayResponse) -> DataRequest {
+    public func request<E: Encodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, validate: Bool = false, response: @escaping JSONArrayResponse) -> DataRequest {
         
         let params = try! parameters.parameters(using: self.configuration.requestEncoder)
         
-        return request(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, response: response)
+        return request(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, validate: validate, response: response)
     }
 }
 
 extension Bryce {
     
     @discardableResult
-    public func request<D: Decodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: Parameters? = nil, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping DecodableResponse<D>) -> DataRequest {
+    public func request<D: Decodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: Parameters? = nil, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, validate: Bool = false, response: @escaping DecodableResponse<D>) -> DataRequest {
         
-        return self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers).validate().responseDecodableObject(queue: self.configuration.responseQueue, decoder: self.configuration.responseDecoder) { (alamofireResponse: DataResponse<D>) in
+        var dataRequest = self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers)
+            
+        if validate { dataRequest = dataRequest.validate() }
+
+        dataRequest.responseDecodableObject(queue: self.configuration.responseQueue, decoder: self.configuration.responseDecoder) { (alamofireResponse: DataResponse<D>) in
             
             let decodable = alamofireResponse.result.value
             let error = alamofireResponse.result.error
             
             response(decodable, error)
         }
+        
+        return dataRequest
     }
     
     @discardableResult
-    public func request<E: Encodable, D: Decodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, response: @escaping DecodableResponse<D>) -> DataRequest {
+    public func request<E: Encodable, D: Decodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, validate: Bool = false, response: @escaping DecodableResponse<D>) -> DataRequest {
         
         let params = try! parameters.parameters(using: self.configuration.requestEncoder)
         
-        return request(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, response: response)
+        return request(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, validate: validate, response: response)
     }
 }
