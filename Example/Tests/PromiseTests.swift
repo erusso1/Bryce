@@ -24,7 +24,7 @@ extension PromiseTests {
     
     func testBasicAuthenticationHeaders() {
         
-        let auth: Authorization = .basic(username: "jdoe123", password: "Password123")
+        let auth: Authorization = .basic(username: "jdoe123", password: "Password123", expiration: nil)
         XCTAssertEqual(auth.headerValue, "Basic amRvZTEyMzpQYXNzd29yZDEyMw==")
         
         let baseURL = URL(string: "https://jsonplaceholder.typicode.com")!
@@ -63,7 +63,7 @@ extension PromiseTests {
     func testBearerAuthenticationHeaders() {
         
         let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
-        let auth: Authorization = .bearer(token: token, refreshToken: nil)
+        let auth: Authorization = .bearer(token: token, refreshToken: nil, expiration: nil)
         XCTAssertEqual(auth.headerValue, "Bearer \(token)")
         
         let baseURL = URL(string: "https://jsonplaceholder.typicode.com")!

@@ -33,25 +33,28 @@ public class Authorization: NSObject, Codable {
     
     public let refreshToken: String?
     
-    public init(type: AuthorizationType, token: String, refreshToken: String?) {
+    public let expiration: Date?
+    
+    public init(type: AuthorizationType, token: String, refreshToken: String?, expiration: Date?) {
         self.type = type
         self.token = token
         self.refreshToken = refreshToken
+        self.expiration = expiration
         super.init()
     }
 }
 
 extension Authorization {
     
-    public static func basic(username: String, password: String) -> Authorization {
+    public static func basic(username: String, password: String, expiration: Date?) -> Authorization {
         
         let token = (username + ":" + password).data(using: .utf8)!.base64EncodedString()
-        return Authorization(type: .basic, token: token, refreshToken: nil)
+        return Authorization(type: .basic, token: token, refreshToken: nil, expiration: expiration)
     }
     
-    public static func bearer(token: String, refreshToken: String?) -> Authorization {
+    public static func bearer(token: String, refreshToken: String?, expiration: Date?) -> Authorization {
         
-        return Authorization(type: .bearer, token: token, refreshToken: refreshToken)
+        return Authorization(type: .bearer, token: token, refreshToken: refreshToken, expiration: expiration)
     }
 }
 

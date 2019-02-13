@@ -33,7 +33,7 @@ extension KeychainTests {
         
         func persist() {
             
-            let auth: Authorization = .basic(username: "jdoe123", password: "Password123")
+            let auth: Authorization = .basic(username: "jdoe123", password: "Password123", expiration: nil)
             XCTAssertNotNil(Bryce.authorizationObserver)
             Bryce.shared.authorization = auth
             XCTAssertNotNil(Bryce.shared.authorization)
