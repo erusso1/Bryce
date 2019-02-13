@@ -8,14 +8,35 @@
 import Alamofire
 import Foundation
 
+public enum AuthorizationType: String, Codable {
+    
+    case basic
+    
+    case bearer
+}
+
 public class Authorization: NSObject, Codable {
     
-    public let headerValue: String
+    static let headerKey = "Authorization"
     
-    public let headerKey = "Autorization"
+    public var headerValue: String {
+        
+        switch type {
+        case .basic: return "Basic \(token)"
+        case .bearer: return "Bearer \(token)"
+        }
+    }
+
+    public let type: AuthorizationType
     
-    public init(headerValue: String) {
-        self.headerValue = headerValue
+    public let token: String
+    
+    public let refreshToken: String?
+    
+    public init(type: AuthorizationType, token: String, refreshToken: String?) {
+        self.type = type
+        self.token = token
+        self.refreshToken = refreshToken
         super.init()
     }
 }
@@ -25,12 +46,12 @@ extension Authorization {
     public static func basic(username: String, password: String) -> Authorization {
         
         let token = (username + ":" + password).data(using: .utf8)!.base64EncodedString()
-        return Authorization(headerValue: "Basic \(token)")
+        return Authorization(type: .basic, token: token, refreshToken: nil)
     }
     
-    public static func bearer(token: String) -> Authorization {
+    public static func bearer(token: String, refreshToken: String?) -> Authorization {
         
-        return Authorization(headerValue: "Bearer \(token)")
+        return Authorization(type: .bearer, token: token, refreshToken: refreshToken)
     }
 }
 

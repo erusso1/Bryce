@@ -63,7 +63,7 @@ extension PromiseTests {
     func testBearerAuthenticationHeaders() {
         
         let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
-        let auth: Authorization = .bearer(token: token)
+        let auth: Authorization = .bearer(token: token, refreshToken: nil)
         XCTAssertEqual(auth.headerValue, "Bearer \(token)")
         
         let baseURL = URL(string: "https://jsonplaceholder.typicode.com")!
