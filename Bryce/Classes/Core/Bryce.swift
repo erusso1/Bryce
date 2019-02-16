@@ -39,8 +39,10 @@ public final class Bryce: NSObject {
                 
                 let policyManager = ServerTrustPolicyManager(policies: [configuration.baseUrl.host!: ServerTrustPolicy.pinPublicKeys(publicKeys: ServerTrustPolicy.publicKeys(in: bundle), validateCertificateChain: true, validateHost: true)])
                 
+                let config = configuration.sessionManager.session.configuration
+                
                 configuration.sessionManager = Alamofire.SessionManager(
-                    configuration: .ephemeral,
+                    configuration: config,
                     serverTrustPolicyManager: policyManager)
             }
         }
