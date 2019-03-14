@@ -158,6 +158,42 @@ extension HTTPTests {
         
         wait(for: [expectation], timeout: timeout)
     }
+    
+    func testHTTPRequests() {
+        
+        let baseURL = URL(string: "https://jsonplaceholder.typicode.com")!
+        let expectation = XCTestExpectation(description: "HTTP request expectation.")
+        
+        Bryce.shared.use(Configuration.init(
+            baseUrl: baseURL,
+            securityPolicy: .none,
+            logLevel: .debug)
+        )
+        
+        let endpoint = Endpoint(components: "posts", "1")
+        
+        Bryce.shared.request(on: endpoint, etagEnabled: true) { (result: DataResponse<Any>) in
+            
+            XCTAssertNil(result.error)
+            XCTAssertNotNil(result.value)
+            
+            Bryce.shared.request(on: endpoint, etagEnabled: true) { (result: DataResponse<Any>) in
+                
+                XCTAssertNil(result.error)
+                XCTAssertNotNil(result.value)
+                
+                Bryce.shared.request(on: endpoint) { (result: DataResponse<Any>) in
+                    
+                    XCTAssertNil(result.error)
+                    XCTAssertNotNil(result.value)
+                    
+                    expectation.fulfill()
+                }
+            }
+        }
+        
+        wait(for: [expectation], timeout: timeout)
+    }
 }
 
 // MARK: Parameter Encoding

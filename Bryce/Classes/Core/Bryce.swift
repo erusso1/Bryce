@@ -25,7 +25,7 @@ public final class Bryce: NSObject {
     
     public func authenticate(_ auth: Authorization) { authorization = auth }
     
-    public func logout() { authorization = nil }
+    public func logout() { authorization = nil; EtagManager.clearEtagMap() }
     
     internal var configuration: Configuration! {
         
