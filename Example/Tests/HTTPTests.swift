@@ -159,7 +159,7 @@ extension HTTPTests {
         wait(for: [expectation], timeout: timeout)
     }
     
-    func testHTTPRequests() {
+    func testEtagHTTPRequests() {
         
         let baseURL = URL(string: "https://jsonplaceholder.typicode.com")!
         let expectation = XCTestExpectation(description: "HTTP request expectation.")
@@ -177,16 +177,16 @@ extension HTTPTests {
             XCTAssertNil(result.error)
             XCTAssertNotNil(result.value)
             
-            Bryce.shared.request(on: endpoint, etagEnabled: true) { (result: DataResponse<Any>) in
+            Bryce.shared.request(on: endpoint, etagEnabled: true) { (result: DefaultDataResponse) in
                 
                 XCTAssertNil(result.error)
-                XCTAssertNotNil(result.value)
+                XCTAssertNotNil(result.data)
                 
                 Bryce.shared.request(on: endpoint) { (result: DataResponse<Any>) in
                     
                     XCTAssertNil(result.error)
                     XCTAssertNotNil(result.value)
-                    
+            
                     expectation.fulfill()
                 }
             }

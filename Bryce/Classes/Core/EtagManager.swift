@@ -10,7 +10,9 @@ import Alamofire
 
 struct EtagManager {
     
-    private static let etagHeaderKey = "Etag"
+    private static let etagResponseHeaderKey = "Etag"
+
+    private static let etagRequestHeaderKey = "If-None-Match"
     
     private static let etagMapDefaultsKey = "BryceNetworking.EtagMap"
     
@@ -50,7 +52,7 @@ struct EtagManager {
         
         var result = headers ?? [:]
         if let etag = etag(for: urlString) {
-            result[etagHeaderKey] = etag
+            result[etagRequestHeaderKey] = etag
         }
         
         return result
@@ -58,21 +60,21 @@ struct EtagManager {
     
     static func storeEtag(endpoint: URLConvertible, method: HTTPMethod, etagEnabled: Bool, response: DefaultDataResponse) {
         
-        guard method == .get, etagEnabled == true, let etag = response.response?.allHeaderFields[etagHeaderKey] as? String, let urlString = (try? endpoint.asURL())?.absoluteString else { return }
+        guard method == .get, etagEnabled == true, let etag = response.response?.allHeaderFields[etagResponseHeaderKey] as? String, let urlString = (try? endpoint.asURL())?.absoluteString else { return }
         
         setEtag(etag, for: urlString)
     }
     
     static func storeEtag(endpoint: URLConvertible, method: HTTPMethod, etagEnabled: Bool, response: DataResponse<Any>) {
         
-        guard method == .get, etagEnabled == true, let etag = response.response?.allHeaderFields[etagHeaderKey] as? String, let urlString = (try? endpoint.asURL())?.absoluteString else { return }
+        guard method == .get, etagEnabled == true, let etag = response.response?.allHeaderFields[etagResponseHeaderKey] as? String, let urlString = (try? endpoint.asURL())?.absoluteString else { return }
 
         setEtag(etag, for: urlString)
     }
     
     static func storeEtag<D: Decodable>(endpoint: URLConvertible, method: HTTPMethod, etagEnabled: Bool, response: DataResponse<D>) {
         
-        guard method == .get, etagEnabled == true, let etag = response.response?.allHeaderFields[etagHeaderKey] as? String, let urlString = (try? endpoint.asURL())?.absoluteString else { return }
+        guard method == .get, etagEnabled == true, let etag = response.response?.allHeaderFields[etagResponseHeaderKey] as? String, let urlString = (try? endpoint.asURL())?.absoluteString else { return }
         
         setEtag(etag, for: urlString)
     }
