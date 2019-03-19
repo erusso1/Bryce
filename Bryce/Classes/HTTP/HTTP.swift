@@ -28,7 +28,11 @@ extension Bryce {
         
         let headersToSend = EtagManager.headersFrom(endpoint: endpoint, method: method, etagEnabled: etagEnabled, headers: headers)
         
-        var dataRequest = self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headersToSend)
+        var dataRequest: DataRequest
+        
+        if etagEnabled && method == .get { dataRequest = self.configuration.sessionManager.requestWithoutCache(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headersToSend) }
+            
+        else { dataRequest = self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headersToSend) }
         
         if validate { dataRequest = dataRequest.validate() }
         
@@ -47,8 +51,12 @@ extension Bryce {
         
         let headersToSend = EtagManager.headersFrom(endpoint: endpoint, method: method, etagEnabled: etagEnabled, headers: headers)
 
-        var dataRequest = self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headersToSend)
+        var dataRequest: DataRequest
+        
+        if etagEnabled && method == .get { dataRequest = self.configuration.sessionManager.requestWithoutCache(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headersToSend) }
             
+        else { dataRequest = self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headersToSend) }
+        
         if validate { dataRequest = dataRequest.validate() }
             
         dataRequest.response(queue: self.configuration.responseQueue) { alamofireResponse in
@@ -68,7 +76,11 @@ extension Bryce {
         
         let headersToSend = EtagManager.headersFrom(endpoint: endpoint, method: method, etagEnabled: etagEnabled, headers: headers)
 
-        var dataRequest = self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headersToSend)
+        var dataRequest: DataRequest
+        
+        if etagEnabled && method == .get { dataRequest = self.configuration.sessionManager.requestWithoutCache(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headersToSend) }
+            
+        else { dataRequest = self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headersToSend) }
         
         if validate { dataRequest = dataRequest.validate() }
         
@@ -87,8 +99,12 @@ extension Bryce {
         
         let headersToSend = EtagManager.headersFrom(endpoint: endpoint, method: method, etagEnabled: etagEnabled, headers: headers)
         
-        var dataRequest = self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headersToSend)
+        var dataRequest: DataRequest
+        
+        if etagEnabled && method == .get { dataRequest = self.configuration.sessionManager.requestWithoutCache(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headersToSend) }
             
+        else { dataRequest = self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headersToSend) }
+        
         if validate { dataRequest = dataRequest.validate() }
 
         dataRequest.responseJSON(queue: self.configuration.responseQueue) { alamofireResponse in
@@ -109,8 +125,12 @@ extension Bryce {
         
         let headersToSend = EtagManager.headersFrom(endpoint: endpoint, method: method, etagEnabled: etagEnabled, headers: headers)
 
-        var dataRequest = self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headersToSend)
+        var dataRequest: DataRequest
+        
+        if etagEnabled && method == .get { dataRequest = self.configuration.sessionManager.requestWithoutCache(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headersToSend) }
             
+        else { dataRequest = self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headersToSend) }
+        
         if validate { dataRequest = dataRequest.validate() }
 
         dataRequest.responseJSON(queue: self.configuration.responseQueue) { alamofireResponse in
@@ -161,8 +181,12 @@ extension Bryce {
         
         let headersToSend = EtagManager.headersFrom(endpoint: endpoint, method: method, etagEnabled: etagEnabled, headers: headers)
         
-        var dataRequest = self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headersToSend)
+        var dataRequest: DataRequest
+        
+        if etagEnabled && method == .get { dataRequest = self.configuration.sessionManager.requestWithoutCache(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headersToSend) }
             
+        else { dataRequest = self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headersToSend) }
+        
         if validate { dataRequest = dataRequest.validate() }
 
         dataRequest.responseDecodableObject(queue: self.configuration.responseQueue, decoder: self.configuration.responseDecoder) { (alamofireResponse: DataResponse<D>) in
@@ -184,5 +208,26 @@ extension Bryce {
         let params = try! parameters.parameters(using: self.configuration.requestEncoder)
         
         return request(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, validate: validate, etagEnabled: etagEnabled, response: response)
+    }
+}
+
+extension Alamofire.SessionManager{
+    @discardableResult
+    open func requestWithoutCache(
+        _ url: URLConvertible,
+        method: HTTPMethod = .get,
+        parameters: Parameters? = nil,
+        encoding: ParameterEncoding = URLEncoding.default,
+        headers: HTTPHeaders? = nil)// also you can add URLRequest.CachePolicy here as parameter
+        -> DataRequest
+    {
+        do {
+            var urlRequest = try URLRequest(url: url, method: method, headers: headers)
+            urlRequest.cachePolicy = .reloadIgnoringCacheData // <<== Cache disabled
+            let encodedURLRequest = try encoding.encode(urlRequest, with: parameters)
+            return request(encodedURLRequest)
+        } catch {
+            return request("")
+        }
     }
 }

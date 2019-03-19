@@ -2,18 +2,18 @@ PODS:
   - Alamofire (4.8.1)
   - AlamofireNetworkActivityLogger (2.3.0):
     - Alamofire (~> 4.6)
-  - BryceNetworking (1.0.4):
-    - BryceNetworking/HTTP (= 1.0.4)
-  - BryceNetworking/Core (1.0.4):
+  - BryceNetworking (1.2.0):
+    - BryceNetworking/HTTP (= 1.2.0)
+  - BryceNetworking/Core (1.2.0):
     - Alamofire
     - AlamofireNetworkActivityLogger
     - CodableAlamofire
     - KeychainAccess
-  - BryceNetworking/HTTP (1.0.4):
+  - BryceNetworking/HTTP (1.2.0):
     - BryceNetworking/Core
-  - BryceNetworking/Keychain (1.0.4):
+  - BryceNetworking/Keychain (1.2.0):
     - BryceNetworking/Core
-  - BryceNetworking/Promises (1.0.4):
+  - BryceNetworking/Promises (1.2.0):
     - BryceNetworking/Core
     - PromiseKit/Alamofire
   - CodableAlamofire (1.1.0):
@@ -55,11 +55,11 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Alamofire: 16ce2c353fb72865124ddae8a57c5942388f4f11
   AlamofireNetworkActivityLogger: 6f3076652ab7fa6c819b59be08ea038d339e36d8
-  BryceNetworking: 1a0f1e18b1c9ab82bec2f2571072514a0a125613
+  BryceNetworking: f29526c7f0d3532715a5ccf5ed2104894e078454
   CodableAlamofire: e2d2edcec7cf413f7862c30c8fa98eded27a83f9
   KeychainAccess: b3816fddcf28aa29d94b10ec305cd52be14c472b
   PromiseKit: 94c6e781838c5bf4717677d0d882b0e7250c80fc
 
 PODFILE CHECKSUM: c0195b08c0a32618154a157c032ce690bc8f1560
 
-COCOAPODS: 1.6.0
+COCOAPODS: 1.6.1
