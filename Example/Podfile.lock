@@ -55,7 +55,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Alamofire: 16ce2c353fb72865124ddae8a57c5942388f4f11
   AlamofireNetworkActivityLogger: 6f3076652ab7fa6c819b59be08ea038d339e36d8
-  BryceNetworking: b7b9593885fc334f51ec37a98104d1648cf863e8
+  BryceNetworking: 643f2e8ea6b2d736ddbfeb87d4aff260c885f028
   CodableAlamofire: e2d2edcec7cf413f7862c30c8fa98eded27a83f9
   KeychainAccess: b3816fddcf28aa29d94b10ec305cd52be14c472b
   PromiseKit: 94c6e781838c5bf4717677d0d882b0e7250c80fc
