@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'BryceNetworking'
-  s.version          = '1.2.1'
+  s.version          = '1.2.2'
   s.summary          = 'Bryce is a simplified URLSession wrapper designed to make HTTP networking easy.'
 
 # This description is used to generate tags and improve search results.
@@ -26,7 +26,7 @@ Pod::Spec.new do |s|
   s.source           = { :git => 'https://github.com/erusso1/Bryce.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
-  s.swift_version = '4.2'
+  s.swift_version = '5.0'
 
   s.ios.deployment_target = '10.0'
   s.watchos.deployment_target = '4.0'
