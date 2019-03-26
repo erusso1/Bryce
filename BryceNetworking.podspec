@@ -29,6 +29,7 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '10.0'
   s.watchos.deployment_target = '4.0'
   s.default_subspec = 'HTTP'
+  s.swift_version = '5.0'
 
   s.subspec 'Core' do |core|
       
