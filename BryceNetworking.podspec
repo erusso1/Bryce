@@ -26,7 +26,7 @@ Pod::Spec.new do |s|
   s.source           = { :git => 'https://github.com/erusso1/Bryce.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
-  s.swift_version = '5'
+  s.swift_version = '4.2'
 
   s.ios.deployment_target = '10.0'
   s.watchos.deployment_target = '4.0'
