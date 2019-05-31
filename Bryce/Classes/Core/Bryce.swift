@@ -8,30 +8,38 @@
 import Foundation
 import Alamofire
 import AlamofireNetworkActivityLogger
+import KeychainAccess
 
 public typealias JSON = [String : Any]
+
+public typealias BryceVoidHandler = () -> Void
 
 public final class Bryce: NSObject {
     
     public static let shared = Bryce()
     
+    private var authorizationKeychain: Keychain?
+    
+    private let authorizationKeychainKey = "bryce_authorization"
+    
     public override init() {
         super.init()
-        
-        NetworkActivityLogger.shared.startLogging()
     }
-    
-    public func use(_ config: Configuration) { configuration = config }
-    
-    public func authenticate(_ auth: Authorization) { authorization = auth }
-    
-    public func logout() { authorization = nil; EtagManager.clearEtagMap() }
-    
-    internal var configuration: Configuration! {
+
+    public private(set) var configuration: Configuration! {
         
         didSet {
             
-            NetworkActivityLogger.shared.level = configuration.logLevel            
+            NetworkActivityLogger.shared.level = configuration.logLevel
+            
+            NetworkActivityLogger.shared.startLogging()
+            
+            if let service = configuration.authorizationKeychainService {
+                
+                self.authorizationKeychain = Keychain(service: service)
+                
+                loadAuthorizationFromKeychain()
+            }
             
             switch configuration!.securityPolicy {
             case .none: break
@@ -48,15 +56,83 @@ public final class Bryce: NSObject {
         }
     }
     
-    @objc dynamic public var authorization: Authorization? {
+    public var authorization: Authorization? {
         
-        didSet {
+        get { return (configuration?.sessionManager.adapter as? AuthorizationMiddleware)?.authorization }
+        
+        set {
+         
+            if let authorization = newValue {
+                
+                let middleware = AuthorizationMiddleware(authorization: authorization)
+                configuration?.sessionManager.adapter = middleware
+                configuration?.sessionManager.retrier = middleware
+                saveAuthorizationToKeychain(authorization)
+            }
+            else {
+                configuration?.sessionManager.adapter = nil
+            }
+        }
+    }
+}
+
+extension Bryce {
+    
+    public func use(_ config: Configuration) { configuration = config }
+    
+    public func logout() {
+        
+        configuration?.sessionManager.adapter = nil
+        
+        EtagManager.clearEtagMap()
+        
+        removeAuthorizationFromKeychain()
+    }
+}
+
+extension Bryce {
+    
+    private func loadAuthorizationFromKeychain() {
+        
+        guard let keychain = self.authorizationKeychain else { return }
+        
+        do {
+            guard let data = try keychain.getData(authorizationKeychainKey) else { return }
+            let authorization = try JSONDecoder().decode(Authorization.self, from: data)
+            print("Loaded authorization from keychain.")
+            self.authorization = authorization
+        }
             
-            guard self.configuration != nil else { return }
+        catch { print("An error occurred loading persisted authorization from Keychain: \(error)") }
+    }
+    
+    private func saveAuthorizationToKeychain(_ authorization: Authorization) {
+        
+        if let keychain = self.authorizationKeychain {
             
-            guard let authorization = authorization else { configuration.sessionManager.adapter = nil; return }
+            do {
+                
+                let data = try JSONEncoder().encode(authorization)
+                try keychain.set(data, key: authorizationKeychainKey)
+                
+                print("Persisted authorization in keychain.")
+            }
+                
+            catch { print("An error occurred setting authorization to Keychain: \(error)") }
+        }
+    }
+    
+    private func removeAuthorizationFromKeychain() {
+        
+        if let keychain = self.authorizationKeychain {
             
-            configuration.sessionManager.adapter = AuthorizationAdapter(authorization: authorization)
+            do {
+                try keychain.remove(authorizationKeychainKey)
+                
+                print("Removed authorization from keychain")
+            }
+                
+            catch { print("An error occurred removing authorization from Keychain: \(error)") }
         }
     }
 }

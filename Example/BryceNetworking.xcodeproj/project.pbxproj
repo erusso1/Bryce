@@ -20,7 +20,6 @@
 		F3AED28C220BECF400FD520F /* PromiseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AED28B220BECF400FD520F /* PromiseTests.swift */; };
 		F3E3982C2211308600019072 /* invalid_cert.crt in Resources */ = {isa = PBXBuildFile; fileRef = F3303C2821FC5949001F92B9 /* invalid_cert.crt */; };
 		F3E3982D2211324900019072 /* valid_cert.crt in Resources */ = {isa = PBXBuildFile; fileRef = F3303C2021F5EC2E001F92B9 /* valid_cert.crt */; };
-		F3E398312211572300019072 /* KeychainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E3982E221156EA00019072 /* KeychainTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,7 +58,6 @@
 		F3303C2821FC5949001F92B9 /* invalid_cert.crt */ = {isa = PBXFileReference; lastKnownFileType = file; path = invalid_cert.crt; sourceTree = "<group>"; };
 		F3303C2A21FC627F001F92B9 /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
 		F3AED28B220BECF400FD520F /* PromiseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromiseTests.swift; sourceTree = "<group>"; };
-		F3E3982E221156EA00019072 /* KeychainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainTests.swift; sourceTree = "<group>"; };
 		F8E2EEE1875D131BF2587F82 /* Pods-BryceNetworking_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BryceNetworking_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-BryceNetworking_Tests/Pods-BryceNetworking_Tests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -144,7 +142,6 @@
 			children = (
 				607FACEB1AFB9204008FA782 /* HTTPTests.swift */,
 				F3AED28B220BECF400FD520F /* PromiseTests.swift */,
-				F3E3982E221156EA00019072 /* KeychainTests.swift */,
 				F3E39830221156ED00019072 /* Models */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 			);
@@ -377,7 +374,6 @@
 				F3303C2B21FC627F001F92B9 /* Comment.swift in Sources */,
 				F3303C2621FC4BF5001F92B9 /* Post.swift in Sources */,
 				F3AED28C220BECF400FD520F /* PromiseTests.swift in Sources */,
-				F3E398312211572300019072 /* KeychainTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
