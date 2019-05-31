@@ -7,6 +7,7 @@
 
 import Alamofire
 import Foundation
+import KeychainAccess
 
 public enum AuthorizationType: String, Codable {
     
@@ -58,23 +59,43 @@ extension Authorization {
     }
 }
 
-final class AuthorizationAdapter: RequestAdapter {
-    
-    private let authorization: Authorization
+final class AuthorizationMiddleware {
+        
+    internal let authorization: Authorization
     
     init(authorization: Authorization) {
         self.authorization = authorization
     }
+}
+
+extension AuthorizationMiddleware: RequestAdapter {
     
     func adapt(_ urlRequest: URLRequest) throws -> URLRequest {
         
         var urlRequest = urlRequest
         
         if urlRequest.url?.host == Bryce.shared.configuration.baseUrl.host {
-           
+            
             urlRequest.setValue(authorization.headerValue, forHTTPHeaderField: "Authorization")
         }
         
         return urlRequest
+    }
+}
+
+extension AuthorizationMiddleware: RequestRetrier {
+    
+    // See https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#adapting-and-retrying-requests
+    
+    func should(_ manager: SessionManager, retry request: Request, with error: Error, completion: @escaping RequestRetryCompletion) {
+        
+        if let response = request.task?.response as? HTTPURLResponse, response.statusCode == 401 {
+            
+            Bryce.shared.configuration?.unauthorizedResponseHandler?()
+            
+            completion(false, 0.0)
+        }
+        
+        else { completion(false, 0.0) }
     }
 }

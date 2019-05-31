@@ -4,7 +4,6 @@ platform :ios, '10.0'
 target 'BryceNetworking_Example' do
   pod 'BryceNetworking', :path => '../'
   pod 'BryceNetworking/Promises', :path => '../'
-  pod 'BryceNetworking/Keychain', :path => '../'
 
   pod 'PromiseKit'
   pod 'PromiseKit/Alamofire'

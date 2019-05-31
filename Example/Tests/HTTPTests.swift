@@ -82,6 +82,52 @@ extension HTTPTests {
     }
 }
 
+// MARK: Keychain
+
+extension HTTPTests {
+    
+    func testKeychainPersistence() {
+        
+        let baseURL = URL(string: "https://jsonplaceholder.typicode.com")!
+        
+        Bryce.shared.use(Configuration.init(
+            baseUrl: baseURL,
+            securityPolicy: .none,
+            logLevel: .debug,
+            authorizationKeychainService: "com.bryce.test"
+            )
+        )
+        
+        func persist() {
+            
+            let auth: Authorization = .basic(username: "jdoe123", password: "Password123", expiration: nil)
+            Bryce.shared.authorization = auth
+            XCTAssertNotNil(Bryce.shared.authorization)
+        }
+        
+        func read(expectsValue: Bool) {
+            
+            if expectsValue {
+                XCTAssertNotNil(Bryce.shared.authorization)
+                XCTAssertEqual(Bryce.shared.authorization?.headerValue, "Basic amRvZTEyMzpQYXNzd29yZDEyMw==")
+            }
+            else {
+                XCTAssertNil(Bryce.shared.authorization)
+            }
+        }
+        
+        func clear() {
+            Bryce.shared.logout()
+        }
+        
+        persist()
+        read(expectsValue: true)
+        clear()
+        read(expectsValue: false)
+        clear()
+    }
+}
+
 // MARK: Certificate Pinning
 
 extension HTTPTests {
@@ -190,6 +236,42 @@ extension HTTPTests {
                     expectation.fulfill()
                 }
             }
+        }
+        
+        wait(for: [expectation], timeout: timeout)
+    }
+}
+
+// MARK: 401 Handling
+
+extension HTTPTests {
+    
+    func test401ResponseHandler() {
+        
+        let baseURL = URL(string: "https://httpstat.us/401")!
+       
+        let handler = {
+            
+            print("Handling 401 response in test...")
+        }
+        
+        Bryce.shared.use(Configuration.init(
+            baseUrl: baseURL,
+            securityPolicy: .none,
+            logLevel: .debug,
+            unauthorizedResponseHandler: handler
+        ))
+        
+        let auth: Authorization = .basic(username: "jdoe123", password: "Password123", expiration: nil)
+        Bryce.shared.authorization = auth
+        
+        let expectation = XCTestExpectation(description: "401 handler expectation.")
+        
+        Bryce.shared.request(on: baseURL, validate: true) { (error: Error?) in
+            
+            XCTAssertNotNil(error)
+            
+            expectation.fulfill()
         }
         
         wait(for: [expectation], timeout: timeout)

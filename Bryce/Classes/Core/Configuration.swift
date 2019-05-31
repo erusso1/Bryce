@@ -23,9 +23,15 @@ public class Configuration: NSObject {
     
     public let logLevel: NetworkActivityLoggerLevel
     
-    internal var sessionManager: Alamofire.SessionManager
+    public let acceptableStatusCodes: Range<Int>
+
+    public var sessionManager: Alamofire.SessionManager
     
     internal let responseQueue: DispatchQueue
+    
+    public let authorizationKeychainService: String?
+    
+    internal let unauthorizedResponseHandler: BryceVoidHandler?
     
     public init(
         baseUrl: URL,
@@ -34,8 +40,12 @@ public class Configuration: NSObject {
         securityPolicy: SecurityPolicy = .none,
         timeout: TimeInterval = 5.0,
         logLevel: NetworkActivityLoggerLevel = .off,
+        acceptableStatusCodes: Range<Int> = 200..<400,
         sessionManager: Alamofire.SessionManager = .default,
-        responseQueue: DispatchQueue = .main
+        responseQueue: DispatchQueue = .main,
+        authorizationKeychainService: String? = nil,
+        unauthorizedResponseHandler: BryceVoidHandler? = nil
+        
         ) {
         
         self.baseUrl =              baseUrl
@@ -44,7 +54,10 @@ public class Configuration: NSObject {
         self.securityPolicy =       securityPolicy
         self.timeout =              timeout
         self.logLevel =             logLevel
+        self.acceptableStatusCodes = acceptableStatusCodes
         self.sessionManager =       sessionManager
         self.responseQueue =        responseQueue
+        self.authorizationKeychainService = authorizationKeychainService
+        self.unauthorizedResponseHandler = unauthorizedResponseHandler
     }
 }
