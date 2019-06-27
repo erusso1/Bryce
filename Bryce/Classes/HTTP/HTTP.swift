@@ -155,25 +155,25 @@ extension Bryce {
 extension Bryce {
     
     @discardableResult
-    public func request<E: Encodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, validate: Bool = true, etagEnabled: Bool = false, response: @escaping ErrorResponse) -> DataRequest {
+    public func request<E: Encodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, customEncoder: JSONEncoder? = nil, headers: HTTPHeaders? = nil, validate: Bool = true, etagEnabled: Bool = false, response: @escaping ErrorResponse) -> DataRequest {
         
-        let params = try! parameters.parameters(using: self.configuration.requestEncoder)
-        
-        return request(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, validate: validate, etagEnabled: etagEnabled, response: response)
-    }
-    
-    @discardableResult
-    public func request<E: Encodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, validate: Bool = true, etagEnabled: Bool = false, response: @escaping JSONResponse) -> DataRequest {
-        
-        let params = try! parameters.parameters(using: self.configuration.requestEncoder)
+        let params = try! parameters.parameters(using: customEncoder ?? self.configuration.requestEncoder)
         
         return request(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, validate: validate, etagEnabled: etagEnabled, response: response)
     }
     
     @discardableResult
-    public func request<E: Encodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, validate: Bool = true, etagEnabled: Bool = false, response: @escaping JSONArrayResponse) -> DataRequest {
+    public func request<E: Encodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, customEncoder: JSONEncoder? = nil, headers: HTTPHeaders? = nil, validate: Bool = true, etagEnabled: Bool = false, response: @escaping JSONResponse) -> DataRequest {
         
-        let params = try! parameters.parameters(using: self.configuration.requestEncoder)
+        let params = try! parameters.parameters(using: customEncoder ?? self.configuration.requestEncoder)
+        
+        return request(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, validate: validate, etagEnabled: etagEnabled, response: response)
+    }
+    
+    @discardableResult
+    public func request<E: Encodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, customEncoder: JSONEncoder? = nil, headers: HTTPHeaders? = nil, validate: Bool = true, etagEnabled: Bool = false, response: @escaping JSONArrayResponse) -> DataRequest {
+        
+        let params = try! parameters.parameters(using: customEncoder ?? self.configuration.requestEncoder)
         
         return request(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, validate: validate, etagEnabled: etagEnabled, response: response)
     }
@@ -208,9 +208,9 @@ extension Bryce {
     }
     
     @discardableResult
-    public func request<E: Encodable, D: Decodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, headers: HTTPHeaders? = nil, validate: Bool = true, etagEnabled: Bool = false, response: @escaping DecodableResponse<D>) -> DataRequest {
+    public func request<E: Encodable, D: Decodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, customEncoder: JSONEncoder? = nil, headers: HTTPHeaders? = nil, validate: Bool = true, etagEnabled: Bool = false, response: @escaping DecodableResponse<D>) -> DataRequest {
         
-        let params = try! parameters.parameters(using: self.configuration.requestEncoder)
+        let params = try! parameters.parameters(using: customEncoder ?? self.configuration.requestEncoder)
         
         return request(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, validate: validate, etagEnabled: etagEnabled, response: response)
     }
