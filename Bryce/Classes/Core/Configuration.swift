@@ -9,6 +9,8 @@ import Foundation
 import Alamofire
 import AlamofireNetworkActivityLogger
 
+public typealias BryceAuthorizationRefreshHandler = (@escaping (Authorization?) -> Void) -> Void
+
 public class Configuration: NSObject {
     
     public let baseUrl: URL
@@ -31,7 +33,7 @@ public class Configuration: NSObject {
     
     public let authorizationKeychainService: String?
     
-    internal let unauthorizedResponseHandler: BryceVoidHandler?
+    internal let authorizationRefreshHandler: BryceAuthorizationRefreshHandler?
     
     public init(
         baseUrl: URL,
@@ -44,7 +46,7 @@ public class Configuration: NSObject {
         sessionManager: Alamofire.SessionManager = .default,
         responseQueue: DispatchQueue = .main,
         authorizationKeychainService: String? = nil,
-        unauthorizedResponseHandler: BryceVoidHandler? = nil
+        authorizationRefreshHandler: BryceAuthorizationRefreshHandler? = nil
         
         ) {
         
@@ -58,6 +60,6 @@ public class Configuration: NSObject {
         self.sessionManager =       sessionManager
         self.responseQueue =        responseQueue
         self.authorizationKeychainService = authorizationKeychainService
-        self.unauthorizedResponseHandler = unauthorizedResponseHandler
+        self.authorizationRefreshHandler = authorizationRefreshHandler
     }
 }
