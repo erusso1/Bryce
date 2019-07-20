@@ -41,6 +41,8 @@ public final class Bryce: NSObject {
                 loadAuthorizationFromKeychain()
             }
             
+            else { self.authorization = nil }
+            
             switch configuration!.securityPolicy {
             case .none: break
             case .certifcatePinning(let bundle):
@@ -61,12 +63,13 @@ public final class Bryce: NSObject {
         get { return (configuration?.sessionManager.adapter as? AuthorizationMiddleware)?.authorization }
         
         set {
+            
+            let middleware = AuthorizationMiddleware(authorization: newValue)
+            configuration?.sessionManager.adapter = middleware
+            configuration?.sessionManager.retrier = middleware
          
             if let authorization = newValue {
                 
-                let middleware = AuthorizationMiddleware(authorization: authorization)
-                configuration?.sessionManager.adapter = middleware
-                configuration?.sessionManager.retrier = middleware
                 saveAuthorizationToKeychain(authorization)
             }
             else {
@@ -82,11 +85,11 @@ extension Bryce {
     
     public func logout() {
         
-        configuration?.sessionManager.adapter = nil
-        
         EtagManager.clearEtagMap()
         
         removeAuthorizationFromKeychain()
+        
+        authorization = nil
     }
 }
 
