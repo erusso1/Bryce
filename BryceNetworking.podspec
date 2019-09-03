@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'BryceNetworking'
-  s.version          = '1.4.0'
+  s.version          = '2.0.0'
   s.summary          = 'Bryce is a simplified URLSession wrapper designed to make HTTP networking easy.'
 
 # This description is used to generate tags and improve search results.
@@ -51,14 +51,14 @@ Pod::Spec.new do |s|
       http.dependency 'BryceNetworking/Core'
   end
   
-  s.subspec 'Promises' do |promises|
+  #s.subspec 'Promises' do |promises|
       
-      promises.ios.deployment_target = '10.0'
-      promises.watchos.deployment_target = '4.0'
-      promises.source_files = 'Bryce/Classes/Promises/*.{swift}'
-      promises.dependency 'BryceNetworking/Core'
-      promises.dependency 'PromiseKit/Alamofire'
-  end
+      #    promises.ios.deployment_target = '10.0'
+      #promises.watchos.deployment_target = '4.0'
+      #promises.source_files = 'Bryce/Classes/Promises/*.{swift}'
+      #promises.dependency 'BryceNetworking/Core'
+      #promises.dependency 'PromiseKit/Alamofire'
+  #end
   
   # s.resource_bundles = {
   #   'Bryce' => ['Bryce/Assets/*.png']

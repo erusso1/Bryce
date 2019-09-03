@@ -29,7 +29,7 @@ public class Configuration: NSObject {
 
     public var sessionManager: Alamofire.SessionManager
     
-    internal let responseQueue: DispatchQueue
+    public let responseQueue: DispatchQueue
     
     public let authorizationKeychainService: String?
     
