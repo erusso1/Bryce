@@ -1,6 +1,24 @@
+
 import XCTest
 import BryceNetworking
-import PromiseKit
+
+extension RouteComponent {
+    
+    static let posts: RouteComponent = "posts"
+    
+    static let comments: RouteComponent = "comments"
+}
+
+struct BryceTestError: DecodableError {
+    
+    static func decodingError() -> BryceTestError {
+        
+        return .init(error: "error_decoding_failure", message: "Something went wrong.")
+    }
+    
+    let error: String
+    let message: String
+}
 
 class HTTPTests: XCTestCase {
     
@@ -40,10 +58,10 @@ extension HTTPTests {
         
         let endpoint = Endpoint(components: "posts", "1")
         
-        Bryce.shared.request(on: endpoint) { (post: Post?, error: Error?) in
+        Bryce.shared.request(on: endpoint, as: Post.self) { result in
             
-            XCTAssertNil(error)
-            XCTAssertNotNil(post)
+            XCTAssertNil(result.error)
+            XCTAssertNotNil(result.value)
             
             expectation.fulfill()
         }
@@ -70,10 +88,10 @@ extension HTTPTests {
         
         let endpoint = Endpoint(components: "posts", "1")
         
-        Bryce.shared.request(on: endpoint) { (post: Post?, error: Error?) in
+        Bryce.shared.request(on: endpoint, as: Post.self) { result in
             
-            XCTAssertNil(error)
-            XCTAssertNotNil(post)
+            XCTAssertNil(result.error)
+            XCTAssertNotNil(result.value)
             
             expectation.fulfill()
         }
@@ -131,6 +149,72 @@ extension HTTPTests {
 // MARK: Certificate Pinning
 
 extension HTTPTests {
+    
+    func testRequestSignatures() {
+        
+        let baseURL = URL(string: "https://jsonplaceholder.typicode.com")!
+        
+        Bryce.shared.use(Configuration.init(
+            baseUrl: baseURL,
+            securityPolicy: .none)
+        )
+        
+        struct Post: Decodable {
+            
+            let userId: Int
+            let id: Int
+            let title: String
+            let body: String
+        }
+        
+        let expectation0 = XCTestExpectation(description: "DefaultDataResponse expectation.")
+        let expectation1 = XCTestExpectation(description: "ErrorResponse expectation.")
+        let expectation2 = XCTestExpectation(description: "DataResponse expectation.")
+        let expectation3 = XCTestExpectation(description: "JSONResponse expectation.")
+
+        Bryce.shared.request(.posts, as: [Post].self) { result in
+                        
+            XCTAssertNotNil(try? result.get())
+            expectation0.fulfill()
+        }
+        
+        Bryce.shared.request(on: Endpoint(components: "posts")) { result in
+            
+            switch result {
+            case .success: XCTAssert(true)
+            case .failure: XCTAssert(false)
+            }
+            expectation1.fulfill()
+        }
+        
+        Bryce.shared.request(on: Endpoint(components: .posts), as: Post.self) { result in
+        
+            XCTAssertNotNil(result.error)
+            expectation2.fulfill()
+        }
+        
+        struct Parameters: Encodable {
+            
+            let postId: Int
+        }
+        
+        Bryce.shared.request(.comments, parameters: Parameters(postId: 1), as: [Comment].self) { result in
+            
+            XCTAssertNil(result.error)
+            XCTAssertNotNil(result.value)
+            XCTAssertEqual(result.value!.count, 5)
+            XCTAssertEqual(result.value!.first!.name, "id labore ex et quam laborum")
+            
+            expectation3.fulfill()
+        }
+        
+        wait(for: [
+            expectation0,
+            expectation1,
+            expectation2,
+            expectation3,
+            ], timeout: 100)
+    }
 
     func testValidCertificatePinning() {
 
@@ -142,12 +226,10 @@ extension HTTPTests {
             securityPolicy: .certifcatePinning(bundle: .main))
         )
         
-        let endpoint = Endpoint(components: "posts", "1")
-        
-        Bryce.shared.request(on: endpoint) { (post: Post?, error: Error?) in
+        Bryce.shared.request(.posts, .id("1"), as: Post.self) { result in
             
-            XCTAssertNil(error)
-            XCTAssertNotNil(post)
+            XCTAssertNil(result.error)
+            XCTAssertNotNil(result.value)
             
             expectation.fulfill()
         }
@@ -192,12 +274,10 @@ extension HTTPTests {
             logLevel: .debug)
         )
         
-        let endpoint = Endpoint(components: "posts", "1")
-        
-        Bryce.shared.request(on: endpoint) { (post: Post?, error: Error?) in
+        Bryce.shared.request(.posts, .id("1"), as: Post.self) { result in
             
-            XCTAssertNil(error)
-            XCTAssertNotNil(post)
+            XCTAssertNil(result.error)
+            XCTAssertNotNil(result.value)
             
             expectation.fulfill()
         }
@@ -205,46 +285,41 @@ extension HTTPTests {
         wait(for: [expectation], timeout: timeout)
     }
     
-    func testEtagHTTPRequests() {
-        
-        let baseURL = URL(string: "https://jsonplaceholder.typicode.com")!
-        let expectation = XCTestExpectation(description: "HTTP request expectation.")
-        
-        Bryce.shared.use(Configuration.init(
-            baseUrl: baseURL,
-            securityPolicy: .none,
-            logLevel: .debug)
-        )
-        
-        let endpoint = Endpoint(components: "posts", "1")
-        
-        Bryce.shared.request(on: endpoint, etagEnabled: true) { (result: DataResponse<Any>) in
-            
-            XCTAssertNil(result.error)
-            XCTAssertNotNil(result.value)
-            
-            Bryce.shared.request(on: endpoint, etagEnabled: true) { (result: DefaultDataResponse) in
-                
-                XCTAssertNil(result.error)
-                XCTAssertNotNil(result.data)
-                
-                Bryce.shared.request(on: endpoint) { (result: DataResponse<Any>) in
-                    
-                    XCTAssertNil(result.error)
-                    XCTAssertNotNil(result.value)
-            
-                    expectation.fulfill()
-                }
-            }
-        }
-        
-        wait(for: [expectation], timeout: timeout)
-    }
-}
-
-// MARK: 401 Handling
-
-extension HTTPTests {
+//    func testEtagHTTPRequests() {
+//
+//        let baseURL = URL(string: "https://jsonplaceholder.typicode.com")!
+//        let expectation = XCTestExpectation(description: "HTTP request expectation.")
+//
+//        Bryce.shared.use(Configuration.init(
+//            baseUrl: baseURL,
+//            securityPolicy: .none,
+//            logLevel: .debug)
+//        )
+//
+//        let endpoint = Endpoint(components: "posts", "1")
+//
+//        Bryce.shared.request(on: endpoint, etagEnabled: true, as: Post.self) { result in
+//
+//            XCTAssertNil(result.error)
+//            XCTAssertNotNil(result.value)
+//
+//            Bryce.shared.request(on: endpoint, etagEnabled: true, as: Post.self) { result in
+//
+//                XCTAssertNil(result.error)
+//                XCTAssertNotNil(result.value)
+//
+//                Bryce.shared.request(on: endpoint, as: Post.self) { result in
+//
+//                    XCTAssertNil(result.error)
+//                    XCTAssertNotNil(result.value)
+//
+//                    expectation.fulfill()
+//                }
+//            }
+//        }
+//
+//        wait(for: [expectation], timeout: timeout)
+//    }
     
     func test401ResponseHandler() {
         
@@ -255,7 +330,7 @@ extension HTTPTests {
         let baseURL = URL(string: "https://httpstat.us/401")!
         
         let handler: BryceAuthorizationRefreshHandler = { callback in
-                        
+            
             DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 0.35) {
                 
                 let result: Authorization? = Authorization(type: .bearer, token: UUID().uuidString, refreshToken: UUID().uuidString, expiration: Date(timeIntervalSinceNow: 3600))
@@ -277,64 +352,17 @@ extension HTTPTests {
         
         print("Sending original request")
         
-        Bryce.shared.request(on: baseURL, validate: true) { (error: Error?) in
+        Bryce.shared.request(on: baseURL) { result in
             
-            XCTAssertNotNil(error)
+            XCTAssertNotNil(result.error)
             
             print("Finish original request")
-
+            
             expectation1.fulfill()
         }
         
         wait(for: [expectation0, expectation1], timeout: timeout)
     }
-}
-
-// MARK: Parameter Encoding
-
-extension HTTPTests {
-
-    func testQueryParamEncoding() {
-
-        let baseURL = URL(string: "https://jsonplaceholder.typicode.com")!
-        let expectation0 = XCTestExpectation(description: "Query param object encoding expectation.")
-        let expectation1 = XCTestExpectation(description: "Query param dictionary encoding expectation.")
-
-        Bryce.shared.use(Configuration.init(
-            baseUrl: baseURL,
-            securityPolicy: .none)
-        )
-
-        struct Parameters: Encodable {
-
-            let postId: Int
-        }
-
-        let endpoint = Endpoint(components: "comments")
-        
-        Bryce.shared.request(on: endpoint, parameters: Parameters(postId: 1)) { (comments: [Comment]?, error: Error?) in
-            
-            XCTAssertNil(error)
-            XCTAssertNotNil(comments)
-            XCTAssertEqual(comments!.count, 5)
-            XCTAssertEqual(comments!.first!.name, "id labore ex et quam laborum")
-            
-            expectation0.fulfill()
-        }
-        
-        Bryce.shared.request(on: endpoint, parameters: ["postId" : 1]) { (comments: [Comment]?, error: Error?) in
-            
-            XCTAssertNil(error)
-            XCTAssertNotNil(comments)
-            XCTAssertEqual(comments!.count, 5)
-            XCTAssertEqual(comments!.first!.name, "id labore ex et quam laborum")
-            
-            expectation1.fulfill()
-        }
-    }
-}
-
-extension HTTPTests {
     
     func testLogout() {
         
@@ -343,7 +371,7 @@ extension HTTPTests {
         XCTAssertEqual(auth.headerValue, "Bearer \(token)")
         
         let baseURL = URL(string: "https://jsonplaceholder.typicode.com")!
-
+        
         Bryce.shared.use(Configuration.init(
             baseUrl: baseURL,
             securityPolicy: .none,
