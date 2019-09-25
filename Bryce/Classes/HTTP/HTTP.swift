@@ -209,9 +209,13 @@ extension Bryce {
         if alamofireResponse.error == nil { return result(.success(alamofireResponse.value!)) }
             
         else {
+                        
+            print("\n\nBryceNetoworking encountered an error: \(alamofireResponse.error!.localizedDescription)")
+            
+            guard let data = alamofireResponse.data else { return result(.failure(T.decodingError())) }
             
             do {
-                let decodedError = try self.configuration.responseDecoder.decode(decodableErrorType, from: alamofireResponse.data!)
+                let decodedError = try self.configuration.responseDecoder.decode(decodableErrorType, from: data)
                 return result(.failure(decodedError))
             }
             
@@ -228,7 +232,12 @@ extension Bryce {
             else { return result(.failure(.malformedResponseBody)) }
         }
             
-        else { return result(.failure(.unknown(error: alamofireResponse.error!))) }
+        else {
+            
+            print("\n\nBryceNetoworking encountered an error: \(alamofireResponse.error!.localizedDescription)")
+            
+            return result(.failure(.unknown(error: alamofireResponse.error!)))
+        }
     }
 }
 
