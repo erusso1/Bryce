@@ -24,6 +24,8 @@ class HTTPTests: XCTestCase {
     
     var timeout: TimeInterval = 500
     
+    let baseURL = URL(string: "https://jsonplaceholder.typicode.com")!
+    
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -45,7 +47,6 @@ extension HTTPTests {
         let auth: Authorization = .basic(username: "jdoe123", password: "Password123", expiration: nil)
         XCTAssertEqual(auth.headerValue, "Basic amRvZTEyMzpQYXNzd29yZDEyMw==")
         
-        let baseURL = URL(string: "https://jsonplaceholder.typicode.com")!
         let expectation = XCTestExpectation(description: "Basic authentication expectation.")
         
         Bryce.shared.use(Configuration.init(
@@ -75,7 +76,6 @@ extension HTTPTests {
         let auth: Authorization = .bearer(token: token, refreshToken: nil, expiration: nil)
         XCTAssertEqual(auth.headerValue, "Bearer \(token)")
         
-        let baseURL = URL(string: "https://jsonplaceholder.typicode.com")!
         let expectation = XCTestExpectation(description: "Basic authentication expectation.")
         
         Bryce.shared.use(Configuration.init(
@@ -105,9 +105,7 @@ extension HTTPTests {
 extension HTTPTests {
     
     func testKeychainPersistence() {
-        
-        let baseURL = URL(string: "https://jsonplaceholder.typicode.com")!
-        
+                
         Bryce.shared.use(Configuration.init(
             baseUrl: baseURL,
             securityPolicy: .none,
@@ -151,9 +149,7 @@ extension HTTPTests {
 extension HTTPTests {
     
     func testRequestSignatures() {
-        
-        let baseURL = URL(string: "https://jsonplaceholder.typicode.com")!
-        
+                
         Bryce.shared.use(Configuration.init(
             baseUrl: baseURL,
             securityPolicy: .none)
@@ -218,7 +214,6 @@ extension HTTPTests {
 
     func testValidCertificatePinning() {
 
-        let baseURL = URL(string: "https://jsonplaceholder.typicode.com")!
         let expectation = XCTestExpectation(description: "Valid cert pinning expectation.")
 
         Bryce.shared.use(Configuration.init(
@@ -265,7 +260,6 @@ extension HTTPTests {
 
     func testNoSecurityPolicy() {
 
-        let baseURL = URL(string: "https://jsonplaceholder.typicode.com")!
         let expectation = XCTestExpectation(description: "No sercurity policy expectation.")
 
         Bryce.shared.use(Configuration.init(
@@ -321,6 +315,33 @@ extension HTTPTests {
 //        wait(for: [expectation], timeout: timeout)
 //    }
     
+    func testSerializationError() {
+        
+        let expectation = XCTestExpectation(description: "Decodable error.")
+
+        Bryce.shared.use(Configuration.init(
+            baseUrl: baseURL,
+            logLevel: .debug
+            )
+        )
+        
+        Bryce.shared.request(.posts, .id("1"), as: Comment.self) { result in
+            
+            XCTAssertNil(result.value)
+            XCTAssertNotNil(result.error)
+            
+            switch result.error! {
+                
+            case .bodyDecodingFailed: XCTAssertTrue(true)
+            default: XCTAssertTrue(false)
+            }
+            
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: timeout)
+    }
+    
     func test401ResponseHandler() {
         
         let expectation0 = XCTestExpectation(description: "401 handler expectation.")
@@ -369,9 +390,7 @@ extension HTTPTests {
         let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
         let auth: Authorization = .bearer(token: token, refreshToken: nil, expiration: nil)
         XCTAssertEqual(auth.headerValue, "Bearer \(token)")
-        
-        let baseURL = URL(string: "https://jsonplaceholder.typicode.com")!
-        
+                
         Bryce.shared.use(Configuration.init(
             baseUrl: baseURL,
             securityPolicy: .none,

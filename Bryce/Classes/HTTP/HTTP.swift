@@ -206,21 +206,34 @@ extension Bryce {
     
     private func handleDecodedResponse<D: Decodable, T: DecodableError>(alamofireResponse: DataResponse<D>, decodableErrorType: T.Type, result: @escaping DecodableErrorResult<D, T>) {
         
-        if alamofireResponse.error == nil { return result(.success(alamofireResponse.value!)) }
+        if alamofireResponse.error == nil {
+            
+            if let serialized = alamofireResponse.result.value { return result(.success(serialized)) }
+                
+            else { return result(.failure(T.decodingError())) }
+        }
             
         else {
-                        
-            print("\n\nBryceNetoworking encountered an error: \(alamofireResponse.error!.localizedDescription)")
+
+            printAlamofireResponseError(alamofireResponse)
+
+            guard let data = alamofireResponse.data, let decodedError = try? self.configuration.responseDecoder.decode(decodableErrorType, from: data) else { return result(.failure(T.decodingError())) }
             
-            guard let data = alamofireResponse.data else { return result(.failure(T.decodingError())) }
-            
-            do {
-                let decodedError = try self.configuration.responseDecoder.decode(decodableErrorType, from: data)
-                return result(.failure(decodedError))
-            }
-            
-            catch { return result(.failure(T.decodingError())) }
+            return result(.failure(decodedError))
         }
+    }
+    
+    private func printAlamofireResponseError<D: Decodable>(_ alamofireResponse: DataResponse<D>) {
+        
+        guard let error = alamofireResponse.error else { return }
+        
+        print("***************************************")
+          print(" ")
+        print("Serialization for request failed: \(alamofireResponse.request?.httpMethod?.uppercased() ?? "") on \(alamofireResponse.request?.url?.absoluteString ?? "")")
+        print("")
+        print("Reason: \(error)")
+        print(" ")
+        print("***************************************")
     }
     
     private func handleDecodedResponse<D: Decodable>(alamofireResponse: DataResponse<D>, result: @escaping DecodableResult<D>) {
@@ -229,14 +242,14 @@ extension Bryce {
             
             if let serialized = alamofireResponse.result.value { return result(.success(serialized)) }
                 
-            else { return result(.failure(.malformedResponseBody)) }
+            else { return result(.failure(.noResponseBody)) }
         }
             
         else {
             
-            print("\n\nBryceNetoworking encountered an error: \(alamofireResponse.error!.localizedDescription)")
+            printAlamofireResponseError(alamofireResponse)
             
-            return result(.failure(.unknown(error: alamofireResponse.error!)))
+            return result(.failure(.bodyDecodingFailed(error: alamofireResponse.error!)))
         }
     }
 }
