@@ -226,7 +226,7 @@ extension Bryce {
             
             catch {
                 
-                logResponseError(method: alamofireResponse.request?.httpMethod ?? "", urlString: alamofireResponse.request?.url?.absoluteString ?? "", error: error)
+                logResponseError(alamofireResponse: alamofireResponse, customDecodingError: error)
                 return result(.failure(T.decodingError()))
             }
         }
@@ -242,8 +242,7 @@ extension Bryce {
         }
             
         else {
-            
-            logResponseError(method: alamofireResponse.request?.httpMethod ?? "", urlString: alamofireResponse.request?.url?.absoluteString ?? "", error: alamofireResponse.error!)
+            logResponseError(alamofireResponse: alamofireResponse, customDecodingError: nil)
             return result(.failure(.bodyDecodingFailed(error: alamofireResponse.error!)))
         }
     }
@@ -251,14 +250,26 @@ extension Bryce {
 
 extension Bryce {
     
-    private func logResponseError(method: String, urlString: String, error: Error) {
-                
+    private func logResponseError<D: Decodable>(alamofireResponse: DataResponse<D>, customDecodingError: Error?) {
+
+        guard let alamofireResponseError = alamofireResponse.error else { return }
+        
+        let method = alamofireResponse.request?.httpMethod ?? ""
+        let urlString = alamofireResponse.request?.url?.absoluteString ?? ""
+        
         print("***************************************")
-          print(" ")
+        print(" ")
         print("Response serialization for request failed: \(method) on \(urlString)")
         print("")
-        print("Reason: \(error)")
+        print("Alamofire response error: \(alamofireResponseError)")
         print(" ")
+        
+        if let error = customDecodingError {
+            
+            print("Custom decodable error serialization: \(error)")
+            print(" ")
+        }
+
         print("***************************************")
     }
 }
