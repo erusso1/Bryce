@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'BryceNetworking'
-  s.version          = '2.0.4'
+  s.version          = '2.0.5'
   s.summary          = 'Bryce is a simplified URLSession wrapper designed to make HTTP networking easy.'
 
 # This description is used to generate tags and improve search results.
@@ -36,8 +36,8 @@ Pod::Spec.new do |s|
       core.ios.deployment_target = '10.0'
       core.watchos.deployment_target = '4.0'
       core.dependency 'KeychainAccess'
-      core.dependency 'Alamofire'
-      core.dependency 'AlamofireNetworkActivityLogger'
+      core.dependency 'Alamofire', '4.9.1'
+      core.dependency 'AlamofireNetworkActivityLogger', '2.4.0'
       core.dependency 'CodableAlamofire'
       core.source_files = 'Bryce/Classes/Core/*.{swift}'
 
