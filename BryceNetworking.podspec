@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'BryceNetworking'
-  s.version          = '2.0.5'
+  s.version          = '2.0.6'
   s.summary          = 'Bryce is a simplified URLSession wrapper designed to make HTTP networking easy.'
 
 # This description is used to generate tags and improve search results.
