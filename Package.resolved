@@ -14,9 +14,9 @@
         "package": "AlamofireNetworkActivityLogger",
         "repositoryURL": "https://github.com/erusso1/AlamofireNetworkActivityLogger.git",
         "state": {
-          "branch": "feature/swift-package",
-          "revision": "5084575815e09e9f037444f95fa9264d3a003a68",
-          "version": null
+          "branch": null,
+          "revision": "29d4e24f9ed371d7c3f19517e2fe0b3f658d6e47",
+          "version": "2.4.1"
         }
       },
       {
