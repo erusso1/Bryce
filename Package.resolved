@@ -6,17 +6,17 @@
         "repositoryURL": "https://github.com/Alamofire/Alamofire.git",
         "state": {
           "branch": null,
-          "revision": "747c8db8d57b68d5e35275f10c92d55f982adbd4",
-          "version": "4.9.1"
+          "revision": "2cbf59935fbb1f26e352ce4db53f1cf9408d5313",
+          "version": "5.0.0-rc.3"
         }
       },
       {
         "package": "AlamofireNetworkActivityLogger",
         "repositoryURL": "https://github.com/erusso1/AlamofireNetworkActivityLogger.git",
         "state": {
-          "branch": "feature/swift-package",
-          "revision": "5084575815e09e9f037444f95fa9264d3a003a68",
-          "version": null
+          "branch": null,
+          "revision": "dc5392634184b8188c5fb751e4ae1dbc38ed40ec",
+          "version": "3.0.1"
         }
       },
       {
@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/Otbivnoe/CodableAlamofire.git",
         "state": {
           "branch": null,
-          "revision": "1521aa1d5e63163a00e57e0201b084403490fe3b",
-          "version": "1.1.2"
+          "revision": "25fb5ea3131672a2bcece132e242e7b37f9534d8",
+          "version": "1.2.0"
         }
       },
       {
