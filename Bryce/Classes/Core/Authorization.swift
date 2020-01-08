@@ -98,7 +98,7 @@ extension AuthorizationMiddleware: RequestRetrier {
     func should(_ manager: SessionManager, retry request: Request, with error: Error, completion: @escaping RequestRetryCompletion) {
         
         // The response is 401 'Unauthorized'. Attempt to retry using retry handler.
-        guard let response = request.task?.response as? HTTPURLResponse, response.statusCode == 401, request.retryCount < maxRetryCount else { return completion(false, 0.0) }
+        guard let response = request.task?.response as? HTTPURLResponse, response.statusCode == 401, request.retryCount < maxRetryCount, let urlRequest = request.request else { return completion(false, 0.0) }
         
         // Check if the client has implemented a refresh handler. Otherwise, immediately fail.
         guard let handler = Bryce.shared.configuration?.authorizationRefreshHandler else { return completion(false, 0.0) }
@@ -113,7 +113,7 @@ extension AuthorizationMiddleware: RequestRetrier {
         isRefreshing = true
         
         // Perform the handler.
-        handler { [weak self] authorization in
+        handler(urlRequest) { [weak self] authorization in
             
             guard let strongSelf = self else { return completion(false, 0.0) }
             

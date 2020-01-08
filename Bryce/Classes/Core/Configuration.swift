@@ -9,7 +9,7 @@ import Foundation
 import Alamofire
 import AlamofireNetworkActivityLogger
 
-public typealias BryceAuthorizationRefreshHandler = (@escaping (Authorization?) -> Void) -> Void
+public typealias BryceAuthorizationRefreshHandler = (URLRequest, @escaping (Authorization?) -> Void) -> Void
 
 public class Configuration: NSObject {
     

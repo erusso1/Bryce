@@ -350,7 +350,9 @@ extension HTTPTests {
         
         let baseURL = URL(string: "https://httpstat.us/401")!
         
-        let handler: BryceAuthorizationRefreshHandler = { callback in
+        let handler: BryceAuthorizationRefreshHandler = { request, callback in
+            
+            XCTAssertEqual(request.url, baseURL)
             
             DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 0.35) {
                 
