@@ -34,15 +34,8 @@ public final class Bryce: NSObject {
             
             NetworkActivityLogger.shared.startLogging()
             
-            if let service = configuration.authorizationKeychainService {
-                
-                self.authorizationKeychain = Keychain(service: service)
-                
-                loadAuthorizationFromKeychain()
-            }
-            
-            else { self.authorization = nil }
-            
+            if let service = configuration.authorizationKeychainService { self.authorizationKeychain = Keychain(service: service) }
+                        
             switch configuration!.securityPolicy {
             case .none: break
             case .certifcatePinning(let bundle):
@@ -58,23 +51,52 @@ public final class Bryce: NSObject {
         }
     }
     
-    public var authorization: Authorization? {
+    private var _authorization: Authorization? {
         
-        get { return (configuration?.sessionManager.adapter as? AuthorizationMiddleware)?.authorization }
-        
-        set {
+        didSet {
             
-            let middleware = AuthorizationMiddleware(authorization: newValue)
-            configuration?.sessionManager.adapter = middleware
-            configuration?.sessionManager.retrier = middleware
-         
-            if let authorization = newValue {
+            if let auth = self._authorization {
                 
-                saveAuthorizationToKeychain(authorization)
+                let middleware = AuthorizationMiddleware(authorization: auth)
+                configuration?.sessionManager.adapter = middleware
+                configuration?.sessionManager.retrier = middleware
             }
+            
             else {
                 configuration?.sessionManager.adapter = nil
+                configuration?.sessionManager.retrier = nil
             }
+        }
+    }
+    
+    public var authorization: Authorization? {
+        
+        get {
+            
+            if let auth = self._authorization {
+                return auth
+            }
+            
+            else if let auth = self.loadAuthorizationFromKeychain() {
+                self._authorization = auth; return auth
+            }
+            
+            else {
+                return nil
+            }
+        }
+        
+        set {
+
+            if let auth = newValue {
+                saveAuthorizationToKeychain(auth)
+            }
+            
+            else {
+                removeAuthorizationFromKeychain()
+            }
+            
+            self._authorization = newValue
         }
     }
 }
@@ -86,27 +108,31 @@ extension Bryce {
     public func logout() {
         
         EtagManager.clearEtagMap()
-        
-        removeAuthorizationFromKeychain()
-        
+                
         authorization = nil
     }
 }
 
 extension Bryce {
     
-    private func loadAuthorizationFromKeychain() {
+    private func loadAuthorizationFromKeychain() -> Authorization? {
         
-        guard let keychain = self.authorizationKeychain else { return }
+        guard let keychain = self.authorizationKeychain else { return nil }
         
         do {
-            guard let data = try keychain.getData(authorizationKeychainKey) else { return }
+            guard let data = try keychain.getData(authorizationKeychainKey) else { return nil }
             let authorization = try JSONDecoder().decode(Authorization.self, from: data)
-            print("Loaded authorization from keychain.")
-            self.authorization = authorization
+            print("***********************************************")
+            print("")
+            print("Bryce loaded authorization from keychain.")
+            if let expiration = authorization.expiration { print("Authorization expiry: \(expiration)") }
+            print("")
+            print("***********************************************")
+            print("")
+            return authorization
         }
             
-        catch { print("An error occurred loading persisted authorization from Keychain: \(error)") }
+        catch { print("An error occurred loading persisted authorization from Keychain: \(error)"); return nil }
     }
     
     private func saveAuthorizationToKeychain(_ authorization: Authorization) {
@@ -117,8 +143,14 @@ extension Bryce {
                 
                 let data = try JSONEncoder().encode(authorization)
                 try keychain.set(data, key: authorizationKeychainKey)
-                
-                print("Persisted authorization in keychain.")
+
+                print("***********************************************")
+                print("")
+                print("Bryce persisted authorization to keychain.")
+                if let expiration = authorization.expiration { print("Authorization expiry: \(expiration)") }
+                print("")
+                print("***********************************************")
+                print("")
             }
                 
             catch { print("An error occurred setting authorization to Keychain: \(error)") }
@@ -132,7 +164,12 @@ extension Bryce {
             do {
                 try keychain.remove(authorizationKeychainKey)
                 
-                print("Removed authorization from keychain")
+                print("***********************************************")
+                print("")
+                print("Bryce removed authorization from keychain.")
+                print("")
+                print("***********************************************")
+                print("")                
             }
                 
             catch { print("An error occurred removing authorization from Keychain: \(error)") }

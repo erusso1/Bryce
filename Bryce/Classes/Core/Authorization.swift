@@ -61,7 +61,7 @@ extension Authorization {
 
 final class AuthorizationMiddleware {
         
-    internal let authorization: Authorization?
+    internal let authorization: Authorization
     
     private var isRefreshing = false
     
@@ -71,7 +71,7 @@ final class AuthorizationMiddleware {
     
     private let maxRetryCount = 1
     
-    init(authorization: Authorization?) {
+    init(authorization: Authorization) {
         self.authorization = authorization
     }
 }
@@ -82,7 +82,7 @@ extension AuthorizationMiddleware: RequestAdapter {
         
         var urlRequest = urlRequest
         
-        if urlRequest.url?.host == Bryce.shared.configuration.baseUrl.host, let authorization = self.authorization {
+        if urlRequest.url?.host == Bryce.shared.configuration.baseUrl.host {
             
             urlRequest.setValue(authorization.headerValue, forHTTPHeaderField: "Authorization")
         }
@@ -113,7 +113,7 @@ extension AuthorizationMiddleware: RequestRetrier {
         isRefreshing = true
         
         // Perform the handler.
-        handler(urlRequest) { [weak self] authorization in
+        handler(urlRequest) { [weak self] in
             
             guard let strongSelf = self else { return completion(false, 0.0) }
             
@@ -126,8 +126,6 @@ extension AuthorizationMiddleware: RequestRetrier {
             
             // Unlock
             strongSelf.isRefreshing = false
-            
-            Bryce.shared.authorization = authorization
         }
     }
 }

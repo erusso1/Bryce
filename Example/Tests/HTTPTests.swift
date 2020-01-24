@@ -50,16 +50,15 @@ extension HTTPTests {
         let expectation = XCTestExpectation(description: "Basic authentication expectation.")
         
         Bryce.shared.use(Configuration.init(
-            baseUrl: baseURL,
-            securityPolicy: .none,
-            logLevel: .debug)
+            baseUrl: baseURL
+            )
         )
         
         Bryce.shared.authorization = auth
         
         let endpoint = Endpoint(components: "posts", "1")
         
-        Bryce.shared.request(on: endpoint, as: Post.self) { result in
+        let request = Bryce.shared.request(on: endpoint, as: Post.self) { result in
             
             XCTAssertNil(result.error)
             XCTAssertNotNil(result.value)
@@ -67,6 +66,8 @@ extension HTTPTests {
             expectation.fulfill()
         }
         
+        XCTAssertEqual(request.request?.allHTTPHeaderFields?["Authorization"], auth.headerValue)
+
         wait(for: [expectation], timeout: timeout)
     }
     
@@ -79,22 +80,23 @@ extension HTTPTests {
         let expectation = XCTestExpectation(description: "Basic authentication expectation.")
         
         Bryce.shared.use(Configuration.init(
-            baseUrl: baseURL,
-            securityPolicy: .none,
-            logLevel: .debug)
+            baseUrl: baseURL
+            )
         )
         
         Bryce.shared.authorization = auth
         
         let endpoint = Endpoint(components: "posts", "1")
         
-        Bryce.shared.request(on: endpoint, as: Post.self) { result in
+        let request = Bryce.shared.request(on: endpoint, as: Post.self) { result in
             
             XCTAssertNil(result.error)
             XCTAssertNotNil(result.value)
             
             expectation.fulfill()
         }
+        
+        XCTAssertEqual(request.request?.allHTTPHeaderFields?["Authorization"], auth.headerValue)
         
         wait(for: [expectation], timeout: timeout)
     }
@@ -108,8 +110,6 @@ extension HTTPTests {
                 
         Bryce.shared.use(Configuration.init(
             baseUrl: baseURL,
-            securityPolicy: .none,
-            logLevel: .debug,
             authorizationKeychainService: "com.bryce.test"
             )
         )
@@ -118,7 +118,6 @@ extension HTTPTests {
             
             let auth: Authorization = .basic(username: "jdoe123", password: "Password123", expiration: nil)
             Bryce.shared.authorization = auth
-            XCTAssertNotNil(Bryce.shared.authorization)
         }
         
         func read(expectsValue: Bool) {
@@ -136,11 +135,14 @@ extension HTTPTests {
             Bryce.shared.logout()
         }
         
-        persist()
-        read(expectsValue: true)
-        clear()
-        read(expectsValue: false)
-        clear()
+        for _ in 0..<10 {
+            read(expectsValue: false)
+            persist()
+            read(expectsValue: true)
+            clear()
+            read(expectsValue: false)
+            clear()
+        }
     }
 }
 
@@ -151,8 +153,8 @@ extension HTTPTests {
     func testRequestSignatures() {
                 
         Bryce.shared.use(Configuration.init(
-            baseUrl: baseURL,
-            securityPolicy: .none)
+            baseUrl: baseURL
+            )
         )
         
         struct Post: Decodable {
@@ -352,15 +354,22 @@ extension HTTPTests {
         
         let handler: BryceAuthorizationRefreshHandler = { request, callback in
             
+            print("Handle 401")
+            
             XCTAssertEqual(request.url, baseURL)
             
             DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 0.35) {
+                                
+                let newToken = UUID().uuidString
+                let newRefreshTokeb = UUID().uuidString
+                let newAuth = Authorization(type: .bearer, token: newToken, refreshToken: newRefreshTokeb, expiration: Date(timeIntervalSinceNow: 3600))
+                Bryce.shared.authorization = newAuth
                 
-                let result: Authorization? = Authorization(type: .bearer, token: UUID().uuidString, refreshToken: UUID().uuidString, expiration: Date(timeIntervalSinceNow: 3600))
+                XCTAssertEqual(newAuth, Bryce.shared.authorization)
                 
                 expectation0.fulfill()
                 
-                callback(result)
+                callback()
             }
         }
         

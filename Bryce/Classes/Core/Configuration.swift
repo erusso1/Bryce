@@ -9,7 +9,7 @@ import Foundation
 import Alamofire
 import AlamofireNetworkActivityLogger
 
-public typealias BryceAuthorizationRefreshHandler = (URLRequest, @escaping (Authorization?) -> Void) -> Void
+public typealias BryceAuthorizationRefreshHandler = (URLRequest, @escaping () -> Void) -> Void
 
 public class Configuration: NSObject {
     
@@ -41,7 +41,7 @@ public class Configuration: NSObject {
         responseDecoder: JSONDecoder = JSONDecoder(),
         securityPolicy: SecurityPolicy = .none,
         timeout: TimeInterval = 5.0,
-        logLevel: NetworkActivityLoggerLevel = .off,
+        logLevel: NetworkActivityLoggerLevel = .debug,
         acceptableStatusCodes: Range<Int> = 200..<400,
         sessionManager: Alamofire.SessionManager = .default,
         responseQueue: DispatchQueue = .main,

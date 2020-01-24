@@ -2,14 +2,14 @@ PODS:
   - Alamofire (4.9.1)
   - AlamofireNetworkActivityLogger (2.4.0):
     - Alamofire (~> 4.8)
-  - BryceNetworking (2.0.8):
-    - BryceNetworking/HTTP (= 2.0.8)
-  - BryceNetworking/Core (2.0.8):
+  - BryceNetworking (2.0.9):
+    - BryceNetworking/HTTP (= 2.0.9)
+  - BryceNetworking/Core (2.0.9):
     - Alamofire (= 4.9.1)
     - AlamofireNetworkActivityLogger (= 2.4.0)
     - CodableAlamofire
     - KeychainAccess
-  - BryceNetworking/HTTP (2.0.8):
+  - BryceNetworking/HTTP (2.0.9):
     - BryceNetworking/Core
   - CodableAlamofire (1.1.2):
     - Alamofire (~> 4.0)
@@ -32,7 +32,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Alamofire: 85e8a02c69d6020a0d734f6054870d7ecb75cf18
   AlamofireNetworkActivityLogger: 6d3398c692d2c5d83b0c58793537860aca1e383d
-  BryceNetworking: a9af5e8df300daafe8b8be72d74c2800278e2afc
+  BryceNetworking: 1498d9f720905809269aa6cc9ae3823d00c0afad
   CodableAlamofire: b7adfb2e5e980392014b4b3f3b8b62c01b9de4aa
   KeychainAccess: 445e28864fe6d3458b41fa211bcdc39890e8bd5a
 
