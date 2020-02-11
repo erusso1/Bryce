@@ -33,6 +33,8 @@ public typealias DecodableErrorResult<D: Decodable, T: DecodableError> = (Swift.
 
 public typealias VoidResult = (Swift.Result<Void, Error>) -> Void
 
+public typealias VoidDecodableErrorResult<T: DecodableError> = (Swift.Result<Void, T>) -> Void
+
 extension Bryce {
     
     @discardableResult
@@ -185,6 +187,54 @@ extension Bryce {
         
         return dataRequest
     }
+    
+    @discardableResult
+    public func request<E: Encodable, T: DecodableError>(_ path: RouteComponent..., method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, customEncoder: JSONEncoder? = nil, headers: HTTPHeaders? = nil, validate: Bool = true, decodableErrorType: T.Type, /*etagEnabled: Bool = false,*/ result: @escaping VoidDecodableErrorResult<T>) -> DataRequest {
+     
+        let endpoint = Endpoint(components: path)
+        
+        return request(on: endpoint, method: method, parameters: parameters, encoding: encoding, customEncoder: customEncoder, headers: headers, validate: validate, decodableErrorType: decodableErrorType, result: result)
+    }
+    
+    @discardableResult
+    public func request<E: Encodable, T: DecodableError>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, customEncoder: JSONEncoder? = nil, headers: HTTPHeaders? = nil, validate: Bool = true, decodableErrorType: T.Type, /*etagEnabled: Bool = false,*/ result: @escaping VoidDecodableErrorResult<T>) -> DataRequest {
+        
+        let params = try! parameters.parameters(using: customEncoder ?? self.configuration.requestEncoder)
+        
+        let dataRequest = prepareDataRequest(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, validate: validate, etagEnabled: false)
+        
+        dataRequest.response(queue: self.configuration.responseQueue) { alamofireResponse in
+            
+            EtagManager.storeEtag(endpoint: endpoint, method: method, etagEnabled: false, response: alamofireResponse)
+
+            self.handleDefaultResponse(alamofireResponse: alamofireResponse, decodableErrorType: decodableErrorType, result: result)
+        }
+        
+        return dataRequest
+    }
+    
+    @discardableResult
+    public func request<T: DecodableError>(_ path: RouteComponent..., method: HTTPMethod = .get, headers: HTTPHeaders? = nil, validate: Bool = true, decodableErrorType: T.Type, /*etagEnabled: Bool = false,*/ result: @escaping VoidDecodableErrorResult<T>) -> DataRequest {
+        
+        let endpoint = Endpoint(components: path)
+
+        return request(on: endpoint, method: method, headers: headers, validate: validate, decodableErrorType: decodableErrorType, result: result)
+    }
+    
+    @discardableResult
+    public func request<T: DecodableError>(on endpoint: URLConvertible, method: HTTPMethod = .get, headers: HTTPHeaders? = nil, validate: Bool = true, decodableErrorType: T.Type, /*etagEnabled: Bool = false,*/ result: @escaping VoidDecodableErrorResult<T>) -> DataRequest {
+        
+        let dataRequest = prepareDataRequest(on: endpoint, method: method, headers: headers, validate: validate, etagEnabled: false)
+        
+        dataRequest.response(queue: self.configuration.responseQueue) { alamofireResponse in
+            
+            EtagManager.storeEtag(endpoint: endpoint, method: method, etagEnabled: false, response: alamofireResponse)
+            
+            self.handleDefaultResponse(alamofireResponse: alamofireResponse, decodableErrorType: decodableErrorType, result: result)
+        }
+        
+        return dataRequest
+    }
 }
 
 extension Bryce {
@@ -204,6 +254,31 @@ extension Bryce {
         return dataRequest
     }
     
+    private func handleDefaultResponse<T: DecodableError>(alamofireResponse: DefaultDataResponse, decodableErrorType: T.Type, result: @escaping VoidDecodableErrorResult<T>) {
+        
+        if alamofireResponse.error == nil {
+            
+            return result(.success(()))
+        }
+        
+        else {
+
+            guard let data = alamofireResponse.data else { return result(.failure(T.decodingError())) }
+            
+            do {
+             
+                let decodedError = try self.configuration.responseDecoder.decode(decodableErrorType, from: data)
+                return result(.failure(decodedError))
+            }
+            
+            catch {
+                
+                logResponseError(alamofireResponse: alamofireResponse, customDecodingError: error)
+                return result(.failure(T.decodingError()))
+            }
+        }
+    }
+    
     private func handleDecodedResponse<D: Decodable, T: DecodableError>(alamofireResponse: DataResponse<D>, decodableErrorType: T.Type, result: @escaping DecodableErrorResult<D, T>) {
         
         if alamofireResponse.error == nil {
@@ -214,7 +289,6 @@ extension Bryce {
         }
             
         else {
-
 
             guard let data = alamofireResponse.data else { return result(.failure(T.decodingError())) }
             
@@ -249,6 +323,29 @@ extension Bryce {
 }
 
 extension Bryce {
+    
+    private func logResponseError(alamofireResponse: DefaultDataResponse, customDecodingError: Error?) {
+        
+        guard let alamofireResponseError = alamofireResponse.error else { return }
+        
+        let method = alamofireResponse.request?.httpMethod ?? ""
+        let urlString = alamofireResponse.request?.url?.absoluteString ?? ""
+        
+        print("***************************************")
+        print(" ")
+        print("Response serialization for request failed: \(method) on \(urlString)")
+        print("")
+        print("Alamofire response error: \(alamofireResponseError)")
+        print(" ")
+        
+        if let error = customDecodingError {
+            
+            print("Custom decodable error serialization: \(error)")
+            print(" ")
+        }
+
+        print("***************************************")
+    }
     
     private func logResponseError<D: Decodable>(alamofireResponse: DataResponse<D>, customDecodingError: Error?) {
 

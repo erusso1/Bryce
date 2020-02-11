@@ -225,8 +225,8 @@ extension HTTPTests {
         
         Bryce.shared.request(.posts, .id("1"), as: Post.self) { result in
             
-            XCTAssertNil(result.error)
-            XCTAssertNotNil(result.value)
+            XCTAssertNotNil(result.error)
+            XCTAssertNil(result.value)
             
             expectation.fulfill()
         }
