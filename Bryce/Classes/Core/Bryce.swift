@@ -105,6 +105,16 @@ extension Bryce {
     
     public func use(_ config: Configuration) { configuration = config }
     
+    internal func log(_ level: LogLevel, _ items: Any...) {
+        
+        if let logger = configuration.customLogger {
+            logger.log(level, items)
+        }
+        else {
+            print(items)
+        }
+    }
+    
     public func logout() {
         
         EtagManager.clearEtagMap()

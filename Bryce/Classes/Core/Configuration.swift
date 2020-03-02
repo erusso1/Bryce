@@ -25,6 +25,8 @@ public class Configuration: NSObject {
     
     public let logLevel: NetworkActivityLoggerLevel
     
+    public let customLogger: LogCustomizable?
+    
     public let acceptableStatusCodes: Range<Int>
 
     public var sessionManager: Alamofire.SessionManager
@@ -42,6 +44,7 @@ public class Configuration: NSObject {
         securityPolicy: SecurityPolicy = .none,
         timeout: TimeInterval = 5.0,
         logLevel: NetworkActivityLoggerLevel = .debug,
+        customLogger: LogCustomizable? = nil,
         acceptableStatusCodes: Range<Int> = 200..<400,
         sessionManager: Alamofire.SessionManager = .default,
         responseQueue: DispatchQueue = .main,
@@ -56,6 +59,7 @@ public class Configuration: NSObject {
         self.securityPolicy =       securityPolicy
         self.timeout =              timeout
         self.logLevel =             logLevel
+        self.customLogger =         customLogger
         self.acceptableStatusCodes = acceptableStatusCodes
         self.sessionManager =       sessionManager
         self.responseQueue =        responseQueue

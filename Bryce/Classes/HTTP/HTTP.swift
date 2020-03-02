@@ -333,14 +333,15 @@ extension Bryce {
         
         print("***************************************")
         print(" ")
-        print("Response serialization for request failed: \(method) on \(urlString)")
-        print("")
-        print("Alamofire response error: \(alamofireResponseError)")
-        print(" ")
         
+        self.log(.error, "Response serialization for request failed: \(method) on \(urlString)")
+        print(" ")
+        self.log(.error, "Alamofire response error: \(alamofireResponseError)")
+        print(" ")
+
         if let error = customDecodingError {
-            
-            print("Custom decodable error serialization: \(error)")
+                        
+            self.log(.error, "Custom decodable error serialization: \(error)")
             print(" ")
         }
 
@@ -356,14 +357,14 @@ extension Bryce {
         
         print("***************************************")
         print(" ")
-        print("Response serialization for request failed: \(method) on \(urlString)")
-        print("")
-        print("Alamofire response error: \(alamofireResponseError)")
+        self.log(.error, "Response serialization for request failed: \(method) on \(urlString)")
         print(" ")
-        
+        self.log(.error, "Alamofire response error: \(alamofireResponseError)")
+        print(" ")
+
         if let error = customDecodingError {
-            
-            print("Custom decodable error serialization: \(error)")
+                        
+            self.log(.error, "Custom decodable error serialization: \(error)")
             print(" ")
         }
 
