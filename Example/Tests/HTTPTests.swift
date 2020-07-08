@@ -344,20 +344,59 @@ extension HTTPTests {
         wait(for: [expectation], timeout: timeout)
     }
     
+    func testRequestRetrierQueue() {
+        
+        func makeRequest(responseCode: UInt) {
+            
+            let expectation = self.expectation(description: "\(responseCode) Expectation")
+            Bryce.shared.request(RouteComponent("\(responseCode)")!) { result in
+                
+                if (200..<400).contains(responseCode) {
+                    XCTAssertNil(result.error, "Expected successful response code to have no error")
+                } else if (400..<600).contains(responseCode) {
+                    XCTAssertNotNil(result.error, "Expected error response code to contain error")
+                }
+                expectation.fulfill()
+            }
+        }
+        
+        let baseURL = URL(string: "https://httpstat.us")!
+
+        let handler: BryceAuthorizationRefreshHandler = { request, callback in
+
+            callback()
+        }
+        
+        Bryce.shared.use(Configuration.init(
+            baseUrl: baseURL,
+            securityPolicy: .none,
+            logLevel: .debug,
+            authorizationRefreshHandler: handler
+        ))
+        
+        Bryce.shared.authorization = .bearer(token: "API_TOKEN", refreshToken: "REFRESH_TOKEN", expiration: Date(timeIntervalSinceNow: 3600))
+        
+        makeRequest(responseCode: 401)
+        makeRequest(responseCode: 200)
+//        makeRequest(responseCode: 201)
+//        makeRequest(responseCode: 204)
+//        makeRequest(responseCode: 400)
+        
+        waitForExpectations(timeout: 20)
+    }
+    
     func test401ResponseHandler() {
         
         let expectation0 = XCTestExpectation(description: "401 handler expectation.")
         
         let expectation1 = XCTestExpectation(description: "401 handler expectation.")
         
-        let baseURL = URL(string: "https://httpstat.us/401")!
+        let baseURL = URL(string: "https://httpstat.us")!
         
         let handler: BryceAuthorizationRefreshHandler = { request, callback in
             
             print("Handle 401")
-            
-            XCTAssertEqual(request.url, baseURL)
-            
+                        
             DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 0.35) {
                                 
                 let newToken = UUID().uuidString
@@ -384,7 +423,7 @@ extension HTTPTests {
         
         print("Sending original request")
         
-        Bryce.shared.request(on: baseURL) { result in
+        Bryce.shared.request("401") { result in
             
             XCTAssertNotNil(result.error)
             
