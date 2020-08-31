@@ -87,6 +87,14 @@ extension AuthorizationMiddleware: RequestAdapter {
             urlRequest.setValue(authorization.headerValue, forHTTPHeaderField: "Authorization")
         }
         
+        if let globalHeaders = Bryce.shared.configuration.globalHeaders {
+            
+            for (key, value) in globalHeaders {
+                
+                urlRequest.setValue(value, forHTTPHeaderField: key)
+            }
+        }
+        
         return urlRequest
     }
 }

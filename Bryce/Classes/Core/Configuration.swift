@@ -27,6 +27,8 @@ public class Configuration: NSObject {
     
     public let customLogger: LogCustomizable?
     
+    public let globalHeaders: [String: String]?
+    
     public let acceptableStatusCodes: Range<Int>
 
     public var sessionManager: Alamofire.SessionManager
@@ -45,12 +47,12 @@ public class Configuration: NSObject {
         timeout: TimeInterval = 5.0,
         logLevel: NetworkActivityLoggerLevel = .debug,
         customLogger: LogCustomizable? = nil,
+        globalHeaders: [String: String]? = nil,
         acceptableStatusCodes: Range<Int> = 200..<400,
         sessionManager: Alamofire.SessionManager = .default,
         responseQueue: DispatchQueue = .main,
         authorizationKeychainService: String? = nil,
         authorizationRefreshHandler: BryceAuthorizationRefreshHandler? = nil
-        
         ) {
         
         self.baseUrl =              baseUrl
@@ -60,6 +62,7 @@ public class Configuration: NSObject {
         self.timeout =              timeout
         self.logLevel =             logLevel
         self.customLogger =         customLogger
+        self.globalHeaders =        globalHeaders
         self.acceptableStatusCodes = acceptableStatusCodes
         self.sessionManager =       sessionManager
         self.responseQueue =        responseQueue
