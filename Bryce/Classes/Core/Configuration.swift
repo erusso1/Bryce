@@ -18,9 +18,7 @@ public class Configuration: NSObject {
     public let requestEncoder: JSONEncoder
     
     public let responseDecoder: JSONDecoder
-    
-    public let securityPolicy: SecurityPolicy
-    
+        
     public let timeout: TimeInterval
     
     public let logLevel: NetworkActivityLoggerLevel
@@ -31,13 +29,11 @@ public class Configuration: NSObject {
     
     public let acceptableStatusCodes: Range<Int>
 
-    public var sessionManager: Alamofire.SessionManager
+    public var session: Alamofire.Session
     
     public let responseQueue: DispatchQueue
     
     public let authorizationKeychainService: String?
-    
-    internal let authorizationRefreshHandler: BryceAuthorizationRefreshHandler?
     
     public init(
         baseUrl: URL,
@@ -49,24 +45,21 @@ public class Configuration: NSObject {
         customLogger: LogCustomizable? = nil,
         globalHeaders: [String: String]? = nil,
         acceptableStatusCodes: Range<Int> = 200..<400,
-        sessionManager: Alamofire.SessionManager = .default,
+        session: Alamofire.Session = .default,
         responseQueue: DispatchQueue = .main,
-        authorizationKeychainService: String? = nil,
-        authorizationRefreshHandler: BryceAuthorizationRefreshHandler? = nil
+        authorizationKeychainService: String? = nil
         ) {
         
         self.baseUrl =              baseUrl
         self.requestEncoder =       requestEncoder
         self.responseDecoder =      responseDecoder
-        self.securityPolicy =       securityPolicy
         self.timeout =              timeout
         self.logLevel =             logLevel
         self.customLogger =         customLogger
         self.globalHeaders =        globalHeaders
         self.acceptableStatusCodes = acceptableStatusCodes
-        self.sessionManager =       sessionManager
+        self.session =              session
         self.responseQueue =        responseQueue
         self.authorizationKeychainService = authorizationKeychainService
-        self.authorizationRefreshHandler = authorizationRefreshHandler
     }
 }
