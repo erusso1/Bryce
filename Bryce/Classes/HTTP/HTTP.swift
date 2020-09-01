@@ -7,7 +7,6 @@
 
 import Foundation
 import Alamofire
-import CodableAlamofire
 
 public protocol DecodableError: Decodable, Error {
     
@@ -50,7 +49,7 @@ extension Bryce {
         
         let dataRequest = prepareDataRequest(on: endpoint, method: method, headers: headers, validate: validate, etagEnabled: false)
         
-        dataRequest.responseDecodableObject(queue: self.configuration.responseQueue, decoder: self.configuration.responseDecoder) { (alamofireResponse: DataResponse<D>) in
+        dataRequest.responseDecodable(of: D.self, queue: self.configuration.responseQueue, decoder: self.configuration.responseDecoder) { alamofireResponse in
             
             EtagManager.storeEtag(endpoint: endpoint, method: method, etagEnabled: false, response: alamofireResponse)
             
@@ -75,8 +74,8 @@ extension Bryce {
         
         let dataRequest = prepareDataRequest(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, validate: validate, etagEnabled: false)
         
-        dataRequest.responseDecodableObject(queue: self.configuration.responseQueue, decoder: self.configuration.responseDecoder) { (alamofireResponse: DataResponse<D>) in
-            
+        dataRequest.responseDecodable(of: D.self, queue: self.configuration.responseQueue, decoder: self.configuration.responseDecoder) { alamofireResponse in
+                
             EtagManager.storeEtag(endpoint: endpoint, method: method, etagEnabled: false, response: alamofireResponse)
             
             self.handleDecodedResponse(alamofireResponse: alamofireResponse, result: result)
@@ -101,7 +100,7 @@ extension Bryce {
         
         let dataRequest = prepareDataRequest(on: endpoint, method: method, headers: headers, validate: validate, etagEnabled: false)
         
-        dataRequest.responseDecodableObject(queue: self.configuration.responseQueue, decoder: self.configuration.responseDecoder) { (alamofireResponse: DataResponse<D>) in
+        dataRequest.responseDecodable(of: D.self, queue: self.configuration.responseQueue, decoder: self.configuration.responseDecoder) { alamofireResponse in
             
             EtagManager.storeEtag(endpoint: endpoint, method: method, etagEnabled: false, response: alamofireResponse)
             
@@ -126,7 +125,7 @@ extension Bryce {
 
         let dataRequest = prepareDataRequest(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, validate: validate, etagEnabled: false)
         
-        dataRequest.responseDecodableObject(queue: self.configuration.responseQueue, decoder: self.configuration.responseDecoder) { (alamofireResponse: DataResponse<D>) in
+        dataRequest.responseDecodable(of: D.self, queue: self.configuration.responseQueue, decoder: self.configuration.responseDecoder) { alamofireResponse in
             
             EtagManager.storeEtag(endpoint: endpoint, method: method, etagEnabled: false, response: alamofireResponse)
             
@@ -245,16 +244,16 @@ extension Bryce {
         
         var dataRequest: DataRequest
         
-        if etagEnabled && method == .get { dataRequest = self.configuration.sessionManager.requestWithoutCache(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headersToSend) }
+        if etagEnabled && method == .get { dataRequest = self.configuration.session.requestWithoutCache(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headersToSend) }
             
-        else { dataRequest = self.configuration.sessionManager.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headersToSend) }
+        else { dataRequest = self.configuration.session.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headersToSend) }
         
         if validate { dataRequest = dataRequest.validate(statusCode: configuration.acceptableStatusCodes) }
         
         return dataRequest
     }
     
-    private func handleDefaultResponse<T: DecodableError>(alamofireResponse: DefaultDataResponse, decodableErrorType: T.Type, result: @escaping VoidDecodableErrorResult<T>) {
+    private func handleDefaultResponse<T: DecodableError>(alamofireResponse: AFDataResponse<Data?>, decodableErrorType: T.Type, result: @escaping VoidDecodableErrorResult<T>) {
         
         if alamofireResponse.error == nil {
             
@@ -279,7 +278,7 @@ extension Bryce {
         }
     }
     
-    private func handleDecodedResponse<D: Decodable, T: DecodableError>(alamofireResponse: DataResponse<D>, decodableErrorType: T.Type, result: @escaping DecodableErrorResult<D, T>) {
+    private func handleDecodedResponse<D: Decodable, T: DecodableError>(alamofireResponse: AFDataResponse<D>, decodableErrorType: T.Type, result: @escaping DecodableErrorResult<D, T>) {
         
         if alamofireResponse.error == nil {
             
@@ -306,7 +305,7 @@ extension Bryce {
         }
     }
         
-    private func handleDecodedResponse<D: Decodable>(alamofireResponse: DataResponse<D>, result: @escaping DecodableResult<D>) {
+    private func handleDecodedResponse<D: Decodable>(alamofireResponse: AFDataResponse<D>, result: @escaping DecodableResult<D>) {
         
         if alamofireResponse.error == nil {
             
@@ -324,7 +323,7 @@ extension Bryce {
 
 extension Bryce {
     
-    private func logResponseError(alamofireResponse: DefaultDataResponse, customDecodingError: Error?) {
+    private func logResponseError(alamofireResponse: AFDataResponse<Data>, customDecodingError: Error?) {
         
         guard let alamofireResponseError = alamofireResponse.error else { return }
         
@@ -348,7 +347,7 @@ extension Bryce {
         print("***************************************")
     }
     
-    private func logResponseError<D: Decodable>(alamofireResponse: DataResponse<D>, customDecodingError: Error?) {
+    private func logResponseError<D: Decodable>(alamofireResponse: AFDataResponse<D>, customDecodingError: Error?) {
 
         guard let alamofireResponseError = alamofireResponse.error else { return }
         
@@ -372,7 +371,7 @@ extension Bryce {
     }
 }
 
-extension Alamofire.SessionManager{
+extension Alamofire.Session{
     @discardableResult
     open func requestWithoutCache(
         _ url: URLConvertible,

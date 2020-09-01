@@ -58,21 +58,21 @@ struct EtagManager {
         return result
     }
     
-    static func storeEtag(endpoint: URLConvertible, method: HTTPMethod, etagEnabled: Bool, response: DefaultDataResponse) {
+    static func storeEtag(endpoint: URLConvertible, method: HTTPMethod, etagEnabled: Bool, response: AFDataResponse<Data>) {
         
         guard method == .get, etagEnabled == true, let etag = response.response?.allHeaderFields[etagResponseHeaderKey] as? String, let urlString = (try? endpoint.asURL())?.absoluteString else { return }
         
         setEtag(etag, for: urlString)
     }
     
-    static func storeEtag(endpoint: URLConvertible, method: HTTPMethod, etagEnabled: Bool, response: DataResponse<Any>) {
+    static func storeEtag(endpoint: URLConvertible, method: HTTPMethod, etagEnabled: Bool, response: AFDataResponse<Any>) {
         
         guard method == .get, etagEnabled == true, let etag = response.response?.allHeaderFields[etagResponseHeaderKey] as? String, let urlString = (try? endpoint.asURL())?.absoluteString else { return }
 
         setEtag(etag, for: urlString)
     }
     
-    static func storeEtag<D: Decodable>(endpoint: URLConvertible, method: HTTPMethod, etagEnabled: Bool, response: DataResponse<D>) {
+    static func storeEtag<D: Decodable>(endpoint: URLConvertible, method: HTTPMethod, etagEnabled: Bool, response: AFDataResponse<D>) {
         
         guard method == .get, etagEnabled == true, let etag = response.response?.allHeaderFields[etagResponseHeaderKey] as? String, let urlString = (try? endpoint.asURL())?.absoluteString else { return }
         

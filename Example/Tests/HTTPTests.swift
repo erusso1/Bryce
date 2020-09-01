@@ -29,120 +29,12 @@ class HTTPTests: XCTestCase {
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
-        Bryce.shared.logout()
+        Bryce.shared.teardown()
     }
 
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
-    }
-}
-
-// MARK: Authentication
-
-extension HTTPTests {
-
-    func testBasicAuthenticationHeaders() {
-        
-        let auth: Authorization = .basic(username: "jdoe123", password: "Password123", expiration: nil)
-        XCTAssertEqual(auth.headerValue, "Basic amRvZTEyMzpQYXNzd29yZDEyMw==")
-        
-        let expectation = XCTestExpectation(description: "Basic authentication expectation.")
-        
-        Bryce.shared.use(Configuration.init(
-            baseUrl: baseURL
-            )
-        )
-        
-        Bryce.shared.authorization = auth
-        
-        let endpoint = Endpoint(components: "posts", "1")
-        
-        let request = Bryce.shared.request(on: endpoint, as: Post.self) { result in
-            
-            XCTAssertNil(result.error)
-            XCTAssertNotNil(result.value)
-            
-            expectation.fulfill()
-        }
-        
-        XCTAssertEqual(request.request?.allHTTPHeaderFields?["Authorization"], auth.headerValue)
-
-        wait(for: [expectation], timeout: timeout)
-    }
-    
-    func testBearerAuthenticationHeaders() {
-        
-        let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
-        let auth: Authorization = .bearer(token: token, refreshToken: nil, expiration: nil)
-        XCTAssertEqual(auth.headerValue, "Bearer \(token)")
-        
-        let expectation = XCTestExpectation(description: "Basic authentication expectation.")
-        
-        Bryce.shared.use(Configuration.init(
-            baseUrl: baseURL
-            )
-        )
-        
-        Bryce.shared.authorization = auth
-        
-        let endpoint = Endpoint(components: "posts", "1")
-        
-        let request = Bryce.shared.request(on: endpoint, as: Post.self) { result in
-            
-            XCTAssertNil(result.error)
-            XCTAssertNotNil(result.value)
-            
-            expectation.fulfill()
-        }
-        
-        XCTAssertEqual(request.request?.allHTTPHeaderFields?["Authorization"], auth.headerValue)
-        
-        wait(for: [expectation], timeout: timeout)
-    }
-}
-
-// MARK: Keychain
-
-extension HTTPTests {
-    
-    func testKeychainPersistence() {
-                
-        Bryce.shared.use(Configuration.init(
-            baseUrl: baseURL,
-            authorizationKeychainService: "com.bryce.test"
-            )
-        )
-        
-        func persist() {
-            
-            let auth: Authorization = .basic(username: "jdoe123", password: "Password123", expiration: nil)
-            Bryce.shared.authorization = auth
-        }
-        
-        func read(expectsValue: Bool) {
-            
-            if expectsValue {
-                XCTAssertNotNil(Bryce.shared.authorization)
-                XCTAssertEqual(Bryce.shared.authorization?.headerValue, "Basic amRvZTEyMzpQYXNzd29yZDEyMw==")
-            }
-            else {
-                XCTAssertNil(Bryce.shared.authorization)
-            }
-        }
-        
-        func clear() {
-            Bryce.shared.logout()
-        }
-        
-        for _ in 0..<10 {
-            read(expectsValue: false)
-            persist()
-            read(expectsValue: true)
-            clear()
-            read(expectsValue: false)
-            clear()
-        }
     }
 }
 
@@ -212,26 +104,6 @@ extension HTTPTests {
             expectation2,
             expectation3,
             ], timeout: 100)
-    }
-
-    func testValidCertificatePinning() {
-
-        let expectation = XCTestExpectation(description: "Valid cert pinning expectation.")
-
-        Bryce.shared.use(Configuration.init(
-            baseUrl: baseURL,
-            securityPolicy: .certifcatePinning(bundle: .main))
-        )
-        
-        Bryce.shared.request(.posts, .id("1"), as: Post.self) { result in
-            
-            XCTAssertNotNil(result.error)
-            XCTAssertNil(result.value)
-            
-            expectation.fulfill()
-        }
-
-        wait(for: [expectation], timeout: timeout)
     }
     
     // Un-check valid_cert.crt from Target Membership before running this test.
@@ -344,74 +216,70 @@ extension HTTPTests {
         wait(for: [expectation], timeout: timeout)
     }
     
-    func test401ResponseHandler() {
-        
-        let expectation0 = XCTestExpectation(description: "401 handler expectation.")
-        
-        let expectation1 = XCTestExpectation(description: "401 handler expectation.")
-        
-        let baseURL = URL(string: "https://httpstat.us/401")!
-        
-        let handler: BryceAuthorizationRefreshHandler = { request, callback in
-            
-            print("Handle 401")
-            
-            XCTAssertEqual(request.url, baseURL)
-            
-            DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 0.35) {
-                                
-                let newToken = UUID().uuidString
-                let newRefreshTokeb = UUID().uuidString
-                let newAuth = Authorization(type: .bearer, token: newToken, refreshToken: newRefreshTokeb, expiration: Date(timeIntervalSinceNow: 3600))
-                Bryce.shared.authorization = newAuth
-                
-                XCTAssertEqual(newAuth, Bryce.shared.authorization)
-                
-                expectation0.fulfill()
-                
-                callback()
-            }
-        }
-        
-        Bryce.shared.use(Configuration.init(
-            baseUrl: baseURL,
-            securityPolicy: .none,
-            logLevel: .debug,
-            authorizationRefreshHandler: handler
-        ))
-        
-        Bryce.shared.authorization = .bearer(token: UUID().uuidString, refreshToken: UUID().uuidString, expiration: Date(timeIntervalSinceNow: 3600))
-        
-        print("Sending original request")
-        
-        Bryce.shared.request(on: baseURL) { result in
-            
-            XCTAssertNotNil(result.error)
-            
-            print("Finish original request")
-            
-            expectation1.fulfill()
-        }
-        
-        wait(for: [expectation0, expectation1], timeout: timeout)
-    }
+//    func test401ResponseHandler() {
+//
+//        let expectation0 = XCTestExpectation(description: "401 handler expectation.")
+//
+//        let expectation1 = XCTestExpectation(description: "401 handler expectation.")
+//
+//        let baseURL = URL(string: "https://httpstat.us/401")!
+//
+//        let handler: BryceAuthorizationRefreshHandler = { request, callback in
+//
+//            print("Handle 401")
+//
+//            XCTAssertEqual(request.url, baseURL)
+//
+//            DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 0.35) {
+//
+//                let newToken = UUID().uuidString
+//                let newRefreshTokeb = UUID().uuidString
+//                let newAuth = Authorization(type: .bearer, token: newToken, refreshToken: newRefreshTokeb, expiration: Date(timeIntervalSinceNow: 3600))
+//                Bryce.shared.authorization = newAuth
+//
+//                XCTAssertEqual(newAuth, Bryce.shared.authorization)
+//
+//                expectation0.fulfill()
+//
+//                callback()
+//            }
+//        }
+//
+//        Bryce.shared.use(Configuration.init(
+//            baseUrl: baseURL,
+//            securityPolicy: .none,
+//            logLevel: .debug,
+//            authorizationRefreshHandler: handler
+//        ))
+//
+//        Bryce.shared.authorization = .bearer(token: UUID().uuidString, refreshToken: UUID().uuidString, expiration: Date(timeIntervalSinceNow: 3600))
+//
+//        print("Sending original request")
+//
+//        Bryce.shared.request(on: baseURL) { result in
+//
+//            XCTAssertNotNil(result.error)
+//
+//            print("Finish original request")
+//
+//            expectation1.fulfill()
+//        }
+//
+//        wait(for: [expectation0, expectation1], timeout: timeout)
+//    }
     
-    func testLogout() {
-        
-        let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
-        let auth: Authorization = .bearer(token: token, refreshToken: nil, expiration: nil)
-        XCTAssertEqual(auth.headerValue, "Bearer \(token)")
-                
-        Bryce.shared.use(Configuration.init(
-            baseUrl: baseURL,
-            securityPolicy: .none,
-            logLevel: .debug)
-        )
-        
-        Bryce.shared.authorization = auth
-        
-        Bryce.shared.logout()
-        
-        XCTAssertNil(Bryce.shared.authorization)
-    }
+//    func testLogout() {
+//
+//        let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+//        let auth: Authorization = .bearer(token: token, refreshToken: nil, expiration: nil)
+//        XCTAssertEqual(auth.headerValue, "Bearer \(token)")
+//
+//        Bryce.shared.use(Configuration.init(
+//            baseUrl: baseURL,
+//            securityPolicy: .none,
+//            logLevel: .debug)
+//        )
+//
+//        Bryce.shared.teardown()
+//    }
 }
