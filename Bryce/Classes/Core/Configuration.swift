@@ -33,8 +33,6 @@ public class Configuration: NSObject {
     
     public let responseQueue: DispatchQueue
     
-    public let authorizationKeychainService: String?
-    
     public init(
         baseUrl: URL,
         requestEncoder: JSONEncoder = JSONEncoder(),
@@ -46,8 +44,7 @@ public class Configuration: NSObject {
         globalHeaders: [String: String]? = nil,
         acceptableStatusCodes: Range<Int> = 200..<400,
         session: Alamofire.Session = .default,
-        responseQueue: DispatchQueue = .main,
-        authorizationKeychainService: String? = nil
+        responseQueue: DispatchQueue = .main
         ) {
         
         self.baseUrl =              baseUrl
@@ -60,6 +57,5 @@ public class Configuration: NSObject {
         self.acceptableStatusCodes = acceptableStatusCodes
         self.session =              session
         self.responseQueue =        responseQueue
-        self.authorizationKeychainService = authorizationKeychainService
     }
 }
