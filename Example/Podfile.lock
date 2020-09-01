@@ -7,10 +7,8 @@ PODS:
   - BryceNetworking/Core (3.0.0):
     - Alamofire (~> 5.0)
     - AlamofireNetworkActivityLogger (~> 3.0)
-    - KeychainAccess
   - BryceNetworking/HTTP (3.0.0):
     - BryceNetworking/Core
-  - KeychainAccess (4.2.0)
 
 DEPENDENCIES:
   - BryceNetworking (from `../`)
@@ -19,7 +17,6 @@ SPEC REPOS:
   trunk:
     - Alamofire
     - AlamofireNetworkActivityLogger
-    - KeychainAccess
 
 EXTERNAL SOURCES:
   BryceNetworking:
@@ -28,8 +25,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Alamofire: df2f8f826963b08b9a870791ad48e07a10090b2e
   AlamofireNetworkActivityLogger: 94e8a7d454a4a9800cef1d0c1d3699754493684b
-  BryceNetworking: 0fb93c9a635f1a94f5d57c4dd0f0a7919ef49396
-  KeychainAccess: 3f760109aa99b05d0f231e28b22642da7153e38a
+  BryceNetworking: 97c117c59c9da1456ba83add0434aa29f31ef03a
 
 PODFILE CHECKSUM: 581fcf1fe10fdd5838c37e6afbb3203be5e7b461
 

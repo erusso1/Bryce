@@ -8,7 +8,6 @@
 import Foundation
 import Alamofire
 import AlamofireNetworkActivityLogger
-import KeychainAccess
 
 public typealias JSON = [String : Any]
 

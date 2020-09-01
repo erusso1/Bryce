@@ -7,7 +7,6 @@
 
 import Alamofire
 import Foundation
-import KeychainAccess
 
 public enum AuthorizationType: String, Codable {
     

@@ -35,7 +35,6 @@ Pod::Spec.new do |s|
       
       core.ios.deployment_target = '10.0'
       core.watchos.deployment_target = '4.0'
-      core.dependency 'KeychainAccess'
       core.dependency 'Alamofire', '~> 5.0'
       core.dependency 'AlamofireNetworkActivityLogger', '~> 3.0'
       core.source_files = 'Bryce/Classes/Core/*.{swift}'
