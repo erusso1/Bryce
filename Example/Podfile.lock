@@ -2,12 +2,12 @@ PODS:
   - Alamofire (5.0.5)
   - AlamofireNetworkActivityLogger (3.0.0):
     - Alamofire (~> 5.0.0-rc.2)
-  - BryceNetworking (3.0.0):
-    - BryceNetworking/HTTP (= 3.0.0)
-  - BryceNetworking/Core (3.0.0):
+  - BryceNetworking (3.0.1):
+    - BryceNetworking/HTTP (= 3.0.1)
+  - BryceNetworking/Core (3.0.1):
     - Alamofire (~> 5.0)
     - AlamofireNetworkActivityLogger (~> 3.0)
-  - BryceNetworking/HTTP (3.0.0):
+  - BryceNetworking/HTTP (3.0.1):
     - BryceNetworking/Core
 
 DEPENDENCIES:
@@ -25,7 +25,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Alamofire: df2f8f826963b08b9a870791ad48e07a10090b2e
   AlamofireNetworkActivityLogger: 94e8a7d454a4a9800cef1d0c1d3699754493684b
-  BryceNetworking: 97c117c59c9da1456ba83add0434aa29f31ef03a
+  BryceNetworking: a2a369bc3cf8b0a311ed2c9d1e71ae71675372c7
 
 PODFILE CHECKSUM: 581fcf1fe10fdd5838c37e6afbb3203be5e7b461
 
