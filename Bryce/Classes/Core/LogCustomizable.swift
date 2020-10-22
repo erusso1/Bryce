@@ -18,5 +18,5 @@ public enum LogLevel {
 
 public protocol LogCustomizable {
     
-    func log(_ level: LogLevel, _ items: Any...)
+    func log(_ prefix: String, _ level: LogLevel, _ items: Any...)
 }

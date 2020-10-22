@@ -45,13 +45,13 @@ extension Bryce {
 
 extension Bryce {
     
-    internal func log(_ level: LogLevel, _ items: Any...) {
+    internal func log(prefix: String = "[Bryce]", _ level: LogLevel, _ items: Any...) {
         
         if let logger = configuration.customLogger {
-            logger.log(level, items)
+            logger.log(prefix, level, items)
         }
         else {
-            print(items)
+            print("\(prefix) \(items)")
         }
     }
 }
