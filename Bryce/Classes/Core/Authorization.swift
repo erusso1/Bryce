@@ -8,52 +8,18 @@
 import Alamofire
 import Foundation
 
-public enum AuthorizationType: String, Codable {
+public enum Authorization {
     
-    case basic
+    case basic(username: String, password: String)
     
-    case bearer
-}
-
-public class Authorization: NSObject, Codable {
+    case bearer(token: String)
     
     static let headerKey = "Authorization"
     
-    public var headerValue: String {
-        
-        switch type {
-        case .basic: return "Basic \(token)"
-        case .bearer: return "Bearer \(token)"
+    var headerValue: String {
+        switch self {
+        case .basic(let username, let password): return "Basic \((username + ":" + password).data(using: .utf8)!.base64EncodedString())"
+        case .bearer(let token): return "Bearer \(token)"
         }
-    }
-
-    public let type: AuthorizationType
-    
-    public let token: String
-    
-    public let refreshToken: String?
-    
-    public let expiration: Date?
-    
-    public init(type: AuthorizationType, token: String, refreshToken: String?, expiration: Date?) {
-        self.type = type
-        self.token = token
-        self.refreshToken = refreshToken
-        self.expiration = expiration
-        super.init()
-    }
-}
-
-extension Authorization {
-    
-    public static func basic(username: String, password: String, expiration: Date?) -> Authorization {
-        
-        let token = (username + ":" + password).data(using: .utf8)!.base64EncodedString()
-        return Authorization(type: .basic, token: token, refreshToken: nil, expiration: expiration)
-    }
-    
-    public static func bearer(token: String, refreshToken: String?, expiration: Date?) -> Authorization {
-        
-        return Authorization(type: .bearer, token: token, refreshToken: refreshToken, expiration: expiration)
     }
 }

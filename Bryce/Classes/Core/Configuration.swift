@@ -9,7 +9,7 @@ import Foundation
 import Alamofire
 import AlamofireNetworkActivityLogger
 
-public class Configuration: NSObject {
+public struct Configuration {
         
     public let requestEncoder: JSONEncoder
     
@@ -30,6 +30,7 @@ public class Configuration: NSObject {
     public let responseQueue: DispatchQueue
     
     public init(
+        session: Alamofire.Session = .default,
         requestEncoder: JSONEncoder = JSONEncoder(),
         responseDecoder: JSONDecoder = JSONDecoder(),
         securityPolicy: SecurityPolicy = .none,
@@ -38,10 +39,10 @@ public class Configuration: NSObject {
         customLogger: LogCustomizable? = nil,
         globalHeaders: [String: String]? = nil,
         acceptableStatusCodes: Range<Int> = 200..<400,
-        session: Alamofire.Session = .default,
         responseQueue: DispatchQueue = .main
         ) {
         
+        self.session =              session
         self.requestEncoder =       requestEncoder
         self.responseDecoder =      responseDecoder
         self.timeout =              timeout
@@ -49,7 +50,6 @@ public class Configuration: NSObject {
         self.customLogger =         customLogger
         self.globalHeaders =        globalHeaders
         self.acceptableStatusCodes = acceptableStatusCodes
-        self.session =              session
         self.responseQueue =        responseQueue
     }
 }

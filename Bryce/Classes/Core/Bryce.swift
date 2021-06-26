@@ -9,10 +9,6 @@ import Foundation
 import Alamofire
 import AlamofireNetworkActivityLogger
 
-public typealias JSON = [String : Any]
-
-public typealias BryceVoidHandler = () -> Void
-
 public enum Bryce {
             
     public private(set) static var configuration: Configuration = .default
@@ -28,8 +24,14 @@ public enum Bryce {
         }
     }
     
-    public static func teardown() {
+    public static func use(_ auth: Authorization) {
         
+        var headers = configuration.globalHeaders ?? [:]
+        headers[Authorization.headerKey] = auth.headerValue
+        configuration.globalHeaders = headers
+    }
+    
+    public static func teardown() {
         configuration.globalHeaders = nil
         NetworkActivityLogger.shared.stopLogging()
     }

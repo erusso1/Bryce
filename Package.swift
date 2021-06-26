@@ -27,8 +27,7 @@ let package = Package(
             path: "Bryce"),
         .testTarget(
             name: "BryceNetworkingTests",
-            dependencies: ["BryceNetworking"],
-            path: "Example/Tests"),
+            dependencies: ["BryceNetworking"]),
     ],
     swiftLanguageVersions: [.v5]
 )
