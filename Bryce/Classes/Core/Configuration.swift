@@ -9,12 +9,8 @@ import Foundation
 import Alamofire
 import AlamofireNetworkActivityLogger
 
-public typealias BryceAuthorizationRefreshHandler = (URLRequest, @escaping () -> Void) -> Void
-
 public class Configuration: NSObject {
-    
-    public let baseUrl: URL
-    
+        
     public let requestEncoder: JSONEncoder
     
     public let responseDecoder: JSONDecoder
@@ -25,7 +21,7 @@ public class Configuration: NSObject {
     
     public let customLogger: LogCustomizable?
     
-    public let globalHeaders: [String: String]?
+    public var globalHeaders: [String: String]?
     
     public let acceptableStatusCodes: Range<Int>
 
@@ -34,7 +30,6 @@ public class Configuration: NSObject {
     public let responseQueue: DispatchQueue
     
     public init(
-        baseUrl: URL,
         requestEncoder: JSONEncoder = JSONEncoder(),
         responseDecoder: JSONDecoder = JSONDecoder(),
         securityPolicy: SecurityPolicy = .none,
@@ -47,7 +42,6 @@ public class Configuration: NSObject {
         responseQueue: DispatchQueue = .main
         ) {
         
-        self.baseUrl =              baseUrl
         self.requestEncoder =       requestEncoder
         self.responseDecoder =      responseDecoder
         self.timeout =              timeout
@@ -58,4 +52,9 @@ public class Configuration: NSObject {
         self.session =              session
         self.responseQueue =        responseQueue
     }
+}
+
+extension Configuration {
+    
+    static let `default`: Configuration = .init()
 }

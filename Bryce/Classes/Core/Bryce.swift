@@ -13,20 +13,11 @@ public typealias JSON = [String : Any]
 
 public typealias BryceVoidHandler = () -> Void
 
-public final class Bryce: NSObject {
+public enum Bryce {
+            
+    public private(set) static var configuration: Configuration = .default
     
-    public static let shared = Bryce()
-        
-    public override init() {
-        super.init()
-    }
-
-    public private(set) var configuration: Configuration!
-}
-
-extension Bryce {
-    
-    public func use(_ config: Configuration) {
+    public static func use(_ config: Configuration) {
         
         configuration = config
         
@@ -37,18 +28,19 @@ extension Bryce {
         }
     }
     
-    public func teardown() { }
+    public static func teardown() {
+        
+        configuration.globalHeaders = nil
+        NetworkActivityLogger.shared.stopLogging()
+    }
 }
 
-extension Bryce {
+func print(prefix: String = "[Bryce]", _ level: LogLevel, _ items: Any...) {
     
-    internal func log(prefix: String = "[Bryce]", _ level: LogLevel, _ items: Any...) {
-        
-        if let logger = configuration.customLogger {
-            logger.log(prefix, level, items)
-        }
-        else {
-            print("\(prefix) \(items)")
-        }
+    if let logger = Bryce.configuration.customLogger {
+        logger.log(prefix, level, items)
+    }
+    else {
+        print(prefix, items)
     }
 }

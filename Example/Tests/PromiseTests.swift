@@ -8,7 +8,7 @@
 //    override func setUp() {
 //        super.setUp()
 //        // Put setup code here. This method is called before the invocation of each test method in the class.
-//        Bryce.shared.logout()
+//        Bryce.logout()
 //    }
 //    
 //    override func tearDown() {
@@ -29,19 +29,19 @@
 //        let baseURL = URL(string: "https://jsonplaceholder.typicode.com")!
 //        let expectation = XCTestExpectation(description: "Basic authentication expectation.")
 //        
-//        Bryce.shared.use(Configuration.init(
+//        Bryce.use(Configuration.init(
 //            baseUrl: baseURL,
 //            securityPolicy: .none,
 //            logLevel: .debug)
 //        )
 //        
-//        Bryce.shared.authorization = auth
+//        Bryce.authorization = auth
 //        
 //        let endpoint = Endpoint(components: "posts", "1")
 //        
 //        firstly {
 //            
-//            Bryce.shared.request(on: endpoint, responseType: Post.self)
+//            Bryce.request(on: endpoint, responseType: Post.self)
 //            }.get { post in
 //                
 //                print("Successfully retreived post: \(post)")
@@ -68,19 +68,19 @@
 //        let baseURL = URL(string: "https://jsonplaceholder.typicode.com")!
 //        let expectation = XCTestExpectation(description: "Basic authentication expectation.")
 //        
-//        Bryce.shared.use(Configuration.init(
+//        Bryce.use(Configuration.init(
 //            baseUrl: baseURL,
 //            securityPolicy: .none,
 //            logLevel: .debug)
 //        )
 //        
-//        Bryce.shared.authorization = auth
+//        Bryce.authorization = auth
 //        
 //        let endpoint = Endpoint(components: "posts", "1")
 //        
 //        firstly {
 //            
-//            Bryce.shared.request(on: endpoint, responseType: Post.self)
+//            Bryce.request(on: endpoint, responseType: Post.self)
 //            }.get { post in
 //                
 //                print("Successfully retreived post: \(post)")
@@ -108,14 +108,14 @@
 //        let baseURL = URL(string: "https://jsonplaceholder.typicode.com")!
 //        let expectation = XCTestExpectation(description: "Valid cert pinning expectation.")
 //        
-//        Bryce.shared.use(Configuration.init(
+//        Bryce.use(Configuration.init(
 //            baseUrl: baseURL,
 //            securityPolicy: .certifcatePinning(bundle: .main))
 //        )
 //        
 //        firstly {
 //            
-//            Bryce.shared.request(on: baseURL.appendingPathComponent("posts").appendingPathComponent("1"), responseType: Post.self)
+//            Bryce.request(on: baseURL.appendingPathComponent("posts").appendingPathComponent("1"), responseType: Post.self)
 //            
 //        }.done { post in
 //                
@@ -142,14 +142,14 @@
 //        let baseURL = URL(string: "https://jsonplaceholder.typicode.com")!
 //        let expectation = XCTestExpectation(description: "Invalid Cert pinning expectation.")
 //        
-//        Bryce.shared.use(Configuration.init(
+//        Bryce.use(Configuration.init(
 //            baseUrl: baseURL,
 //            securityPolicy: .certifcatePinning(bundle: .main))
 //        )
 //        
 //        firstly {
 //            
-//            Bryce.shared.request(on : baseURL.appendingPathComponent("posts").appendingPathComponent("1"), responseType: Post.self)
+//            Bryce.request(on : baseURL.appendingPathComponent("posts").appendingPathComponent("1"), responseType: Post.self)
 //            
 //        }.done { post in
 //                
@@ -176,7 +176,7 @@
 //        let baseURL = URL(string: "https://jsonplaceholder.typicode.com")!
 //        let expectation = XCTestExpectation(description: "No sercurity policy expectation.")
 //        
-//        Bryce.shared.use(Configuration.init(
+//        Bryce.use(Configuration.init(
 //            baseUrl: baseURL,
 //            securityPolicy: .none,
 //            logLevel: .debug)
@@ -184,7 +184,7 @@
 //        
 //        firstly {
 //            
-//            Bryce.shared.request(on: baseURL.appendingPathComponent("posts").appendingPathComponent("1"), responseType: Post.self)
+//            Bryce.request(on: baseURL.appendingPathComponent("posts").appendingPathComponent("1"), responseType: Post.self)
 //            
 //        }.get { post in
 //                
@@ -193,7 +193,7 @@
 //                
 //        }.then { post in
 //                
-//            Bryce.shared.request(on: "https://jsonplaceholder.typicode.com/posts/2", responseType: Post.self)
+//            Bryce.request(on: "https://jsonplaceholder.typicode.com/posts/2", responseType: Post.self)
 //                
 //        }.get { post in
 //                
@@ -223,7 +223,7 @@
 //        let baseURL = URL(string: "https://jsonplaceholder.typicode.com")!
 //        let expectation = XCTestExpectation(description: "Query param encoding expectation.")
 //        
-//        Bryce.shared.use(Configuration.init(
+//        Bryce.use(Configuration.init(
 //            baseUrl: baseURL,
 //            securityPolicy: .none)
 //        )
@@ -235,7 +235,7 @@
 //        
 //        firstly {
 //            
-//            Bryce.shared.request(on: baseURL.appendingPathComponent("comments"), parameters: Parameters(postId: 1), encoding: URLEncoding.queryString, responseType: [Comment].self)
+//            Bryce.request(on: baseURL.appendingPathComponent("comments"), parameters: Parameters(postId: 1), encoding: URLEncoding.queryString, responseType: [Comment].self)
 //            
 //        }.get { comments in
 //                
@@ -245,7 +245,7 @@
 //                
 //        }.then { comments in
 //                
-//            Bryce.shared.request(on: baseURL.appendingPathComponent("comments"), parameters: ["postId" : 1], encoding: URLEncoding.queryString, responseType: [Comment].self)
+//            Bryce.request(on: baseURL.appendingPathComponent("comments"), parameters: ["postId" : 1], encoding: URLEncoding.queryString, responseType: [Comment].self)
 //                
 //        }.done { comments in
 //                
