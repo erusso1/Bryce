@@ -37,7 +37,7 @@ public typealias VoidDecodableErrorResult<T: DecodableError> = (Swift.Result<Voi
 extension Bryce {
     
     @discardableResult
-    public func request<D: Decodable>(_ path: RouteComponent..., method: HTTPMethod = .get, headers: HTTPHeaders? = nil, validate: Bool = true, /*etagEnabled: Bool = false,*/ as responseType: D.Type, result: @escaping DecodableResult<D>) -> DataRequest {
+    public func request<D: Decodable>(_ path: RouteComponent..., method: HTTPMethod = .get, headers: HTTPHeaders? = nil, validate: Bool = true, as responseType: D.Type, result: @escaping DecodableResult<D>) -> DataRequest {
         
         let endpoint = Endpoint(components: path)
         
@@ -45,14 +45,12 @@ extension Bryce {
     }
     
     @discardableResult
-    public func request<D: Decodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, headers: HTTPHeaders? = nil, validate: Bool = true, /*etagEnabled: Bool = false,*/ as responseType: D.Type, result: @escaping DecodableResult<D>) -> DataRequest {
+    public func request<D: Decodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, headers: HTTPHeaders? = nil, validate: Bool = true, as responseType: D.Type, result: @escaping DecodableResult<D>) -> DataRequest {
         
         let dataRequest = prepareDataRequest(on: endpoint, method: method, headers: headers, validate: validate, etagEnabled: false)
         
         dataRequest.responseDecodable(of: D.self, queue: self.configuration.responseQueue, decoder: self.configuration.responseDecoder) { alamofireResponse in
-            
-            EtagManager.storeEtag(endpoint: endpoint, method: method, etagEnabled: false, response: alamofireResponse)
-            
+                        
             self.handleDecodedResponse(alamofireResponse: alamofireResponse, result: result)
         }
         
@@ -60,7 +58,7 @@ extension Bryce {
     }
     
     @discardableResult
-    public func request<E: Encodable, D: Decodable>(_ path: RouteComponent..., method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, customEncoder: JSONEncoder? = nil, headers: HTTPHeaders? = nil, validate: Bool = true, /*etagEnabled: Bool = false,*/ as responseType: D.Type, result: @escaping DecodableResult<D>) -> DataRequest {
+    public func request<E: Encodable, D: Decodable>(_ path: RouteComponent..., method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, customEncoder: JSONEncoder? = nil, headers: HTTPHeaders? = nil, validate: Bool = true, as responseType: D.Type, result: @escaping DecodableResult<D>) -> DataRequest {
         
         let endpoint = Endpoint(components: path)
         
@@ -68,16 +66,14 @@ extension Bryce {
     }
     
     @discardableResult
-    public func request<E: Encodable, D: Decodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, customEncoder: JSONEncoder? = nil, headers: HTTPHeaders? = nil, validate: Bool = true, /*etagEnabled: Bool = false,*/ as responseType: D.Type, result: @escaping DecodableResult<D>) -> DataRequest {
+    public func request<E: Encodable, D: Decodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, customEncoder: JSONEncoder? = nil, headers: HTTPHeaders? = nil, validate: Bool = true, as responseType: D.Type, result: @escaping DecodableResult<D>) -> DataRequest {
         
         let params = try! parameters.parameters(using: customEncoder ?? self.configuration.requestEncoder)
         
         let dataRequest = prepareDataRequest(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, validate: validate, etagEnabled: false)
         
         dataRequest.responseDecodable(of: D.self, queue: self.configuration.responseQueue, decoder: self.configuration.responseDecoder) { alamofireResponse in
-                
-            EtagManager.storeEtag(endpoint: endpoint, method: method, etagEnabled: false, response: alamofireResponse)
-            
+                            
             self.handleDecodedResponse(alamofireResponse: alamofireResponse, result: result)
         }
         
@@ -88,7 +84,7 @@ extension Bryce {
 extension Bryce {
     
     @discardableResult
-    public func request<D: Decodable, T: DecodableError>(_ path: RouteComponent..., method: HTTPMethod = .get, headers: HTTPHeaders? = nil, validate: Bool = true, /*etagEnabled: Bool = false,*/ as responseType: D.Type, decodableErrorType: T.Type, result: @escaping DecodableErrorResult<D, T>) -> DataRequest {
+    public func request<D: Decodable, T: DecodableError>(_ path: RouteComponent..., method: HTTPMethod = .get, headers: HTTPHeaders? = nil, validate: Bool = true, as responseType: D.Type, decodableErrorType: T.Type, result: @escaping DecodableErrorResult<D, T>) -> DataRequest {
         
         let endpoint = Endpoint(components: path)
         
@@ -96,14 +92,12 @@ extension Bryce {
     }
     
     @discardableResult
-    public func request<D: Decodable, T: DecodableError>(on endpoint: URLConvertible, method: HTTPMethod = .get, headers: HTTPHeaders? = nil, validate: Bool = true, /*etagEnabled: Bool = false,*/ as responseType: D.Type, decodableErrorType: T.Type, result: @escaping DecodableErrorResult<D, T>) -> DataRequest {
+    public func request<D: Decodable, T: DecodableError>(on endpoint: URLConvertible, method: HTTPMethod = .get, headers: HTTPHeaders? = nil, validate: Bool = true, as responseType: D.Type, decodableErrorType: T.Type, result: @escaping DecodableErrorResult<D, T>) -> DataRequest {
         
         let dataRequest = prepareDataRequest(on: endpoint, method: method, headers: headers, validate: validate, etagEnabled: false)
         
         dataRequest.responseDecodable(of: D.self, queue: self.configuration.responseQueue, decoder: self.configuration.responseDecoder) { alamofireResponse in
-            
-            EtagManager.storeEtag(endpoint: endpoint, method: method, etagEnabled: false, response: alamofireResponse)
-            
+                        
             self.handleDecodedResponse(alamofireResponse: alamofireResponse, decodableErrorType: decodableErrorType, result: result)
         }
         
@@ -111,7 +105,7 @@ extension Bryce {
     }
     
     @discardableResult
-    public func request<E: Encodable, D: Decodable, T: DecodableError>(_ path: RouteComponent..., method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, customEncoder: JSONEncoder? = nil, headers: HTTPHeaders? = nil, validate: Bool = true, /*etagEnabled: Bool = false,*/ as responseType: D.Type, decodableErrorType: T.Type, result: @escaping DecodableErrorResult<D, T>) -> DataRequest {
+    public func request<E: Encodable, D: Decodable, T: DecodableError>(_ path: RouteComponent..., method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, customEncoder: JSONEncoder? = nil, headers: HTTPHeaders? = nil, validate: Bool = true, as responseType: D.Type, decodableErrorType: T.Type, result: @escaping DecodableErrorResult<D, T>) -> DataRequest {
      
         let endpoint = Endpoint(components: path)
 
@@ -119,16 +113,14 @@ extension Bryce {
     }
     
     @discardableResult
-    public func request<E: Encodable, D: Decodable, T: DecodableError>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, customEncoder: JSONEncoder? = nil, headers: HTTPHeaders? = nil, validate: Bool = true, /*etagEnabled: Bool = false,*/ as responseType: D.Type, decodableErrorType: T.Type, result: @escaping DecodableErrorResult<D, T>) -> DataRequest {
+    public func request<E: Encodable, D: Decodable, T: DecodableError>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, customEncoder: JSONEncoder? = nil, headers: HTTPHeaders? = nil, validate: Bool = true, as responseType: D.Type, decodableErrorType: T.Type, result: @escaping DecodableErrorResult<D, T>) -> DataRequest {
         
         let params = try! parameters.parameters(using: customEncoder ?? self.configuration.requestEncoder)
 
         let dataRequest = prepareDataRequest(on: endpoint, method: method, parameters: params, encoding: encoding, headers: headers, validate: validate, etagEnabled: false)
         
         dataRequest.responseDecodable(of: D.self, queue: self.configuration.responseQueue, decoder: self.configuration.responseDecoder) { alamofireResponse in
-            
-            EtagManager.storeEtag(endpoint: endpoint, method: method, etagEnabled: false, response: alamofireResponse)
-            
+                        
             self.handleDecodedResponse(alamofireResponse: alamofireResponse, decodableErrorType: decodableErrorType, result: result)
         }
         
@@ -136,7 +128,7 @@ extension Bryce {
     }
     
     @discardableResult
-    public func request<E: Encodable>(_ path: RouteComponent..., method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, customEncoder: JSONEncoder? = nil, headers: HTTPHeaders? = nil, validate: Bool = true, /*etagEnabled: Bool = false,*/ result: @escaping VoidResult) -> DataRequest {
+    public func request<E: Encodable>(_ path: RouteComponent..., method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, customEncoder: JSONEncoder? = nil, headers: HTTPHeaders? = nil, validate: Bool = true, result: @escaping VoidResult) -> DataRequest {
      
         let endpoint = Endpoint(components: path)
         
@@ -144,7 +136,7 @@ extension Bryce {
     }
     
     @discardableResult
-    public func request<E: Encodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, customEncoder: JSONEncoder? = nil, headers: HTTPHeaders? = nil, validate: Bool = true, /*etagEnabled: Bool = false,*/ result: @escaping VoidResult) -> DataRequest {
+    public func request<E: Encodable>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, customEncoder: JSONEncoder? = nil, headers: HTTPHeaders? = nil, validate: Bool = true, result: @escaping VoidResult) -> DataRequest {
         
         let params = try! parameters.parameters(using: customEncoder ?? self.configuration.requestEncoder)
         
@@ -152,8 +144,6 @@ extension Bryce {
         
         dataRequest.response(queue: self.configuration.responseQueue) { alamofireResponse in
             
-            EtagManager.storeEtag(endpoint: endpoint, method: method, etagEnabled: false, response: alamofireResponse)
-
             guard alamofireResponse.error == nil else { return result(.failure(alamofireResponse.error!)) }
 
             result(.success(()))
@@ -163,7 +153,7 @@ extension Bryce {
     }
     
     @discardableResult
-    public func request(_ path: RouteComponent..., method: HTTPMethod = .get, headers: HTTPHeaders? = nil, validate: Bool = true, /*etagEnabled: Bool = false,*/ result: @escaping VoidResult) -> DataRequest {
+    public func request(_ path: RouteComponent..., method: HTTPMethod = .get, headers: HTTPHeaders? = nil, validate: Bool = true, result: @escaping VoidResult) -> DataRequest {
         
         let endpoint = Endpoint(components: path)
 
@@ -171,14 +161,12 @@ extension Bryce {
     }
     
     @discardableResult
-    public func request(on endpoint: URLConvertible, method: HTTPMethod = .get, headers: HTTPHeaders? = nil, validate: Bool = true, /*etagEnabled: Bool = false,*/ result: @escaping VoidResult) -> DataRequest {
+    public func request(on endpoint: URLConvertible, method: HTTPMethod = .get, headers: HTTPHeaders? = nil, validate: Bool = true, result: @escaping VoidResult) -> DataRequest {
         
         let dataRequest = prepareDataRequest(on: endpoint, method: method, headers: headers, validate: validate, etagEnabled: false)
         
         dataRequest.response(queue: self.configuration.responseQueue) { alamofireResponse in
-            
-            EtagManager.storeEtag(endpoint: endpoint, method: method, etagEnabled: false, response: alamofireResponse)
-            
+                        
             guard alamofireResponse.error == nil else { return result(.failure(alamofireResponse.error!)) }
             
             result(.success(()))
@@ -188,7 +176,7 @@ extension Bryce {
     }
     
     @discardableResult
-    public func request<E: Encodable, T: DecodableError>(_ path: RouteComponent..., method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, customEncoder: JSONEncoder? = nil, headers: HTTPHeaders? = nil, validate: Bool = true, decodableErrorType: T.Type, /*etagEnabled: Bool = false,*/ result: @escaping VoidDecodableErrorResult<T>) -> DataRequest {
+    public func request<E: Encodable, T: DecodableError>(_ path: RouteComponent..., method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, customEncoder: JSONEncoder? = nil, headers: HTTPHeaders? = nil, validate: Bool = true, decodableErrorType: T.Type, result: @escaping VoidDecodableErrorResult<T>) -> DataRequest {
      
         let endpoint = Endpoint(components: path)
         
@@ -196,7 +184,7 @@ extension Bryce {
     }
     
     @discardableResult
-    public func request<E: Encodable, T: DecodableError>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, customEncoder: JSONEncoder? = nil, headers: HTTPHeaders? = nil, validate: Bool = true, decodableErrorType: T.Type, /*etagEnabled: Bool = false,*/ result: @escaping VoidDecodableErrorResult<T>) -> DataRequest {
+    public func request<E: Encodable, T: DecodableError>(on endpoint: URLConvertible, method: HTTPMethod = .get, parameters: E, encoding: ParameterEncoding = URLEncoding.default, customEncoder: JSONEncoder? = nil, headers: HTTPHeaders? = nil, validate: Bool = true, decodableErrorType: T.Type, result: @escaping VoidDecodableErrorResult<T>) -> DataRequest {
         
         let params = try! parameters.parameters(using: customEncoder ?? self.configuration.requestEncoder)
         
@@ -204,8 +192,6 @@ extension Bryce {
         
         dataRequest.response(queue: self.configuration.responseQueue) { alamofireResponse in
             
-            EtagManager.storeEtag(endpoint: endpoint, method: method, etagEnabled: false, response: alamofireResponse)
-
             self.handleDefaultResponse(alamofireResponse: alamofireResponse, decodableErrorType: decodableErrorType, result: result)
         }
         
@@ -213,7 +199,7 @@ extension Bryce {
     }
     
     @discardableResult
-    public func request<T: DecodableError>(_ path: RouteComponent..., method: HTTPMethod = .get, headers: HTTPHeaders? = nil, validate: Bool = true, decodableErrorType: T.Type, /*etagEnabled: Bool = false,*/ result: @escaping VoidDecodableErrorResult<T>) -> DataRequest {
+    public func request<T: DecodableError>(_ path: RouteComponent..., method: HTTPMethod = .get, headers: HTTPHeaders? = nil, validate: Bool = true, decodableErrorType: T.Type, result: @escaping VoidDecodableErrorResult<T>) -> DataRequest {
         
         let endpoint = Endpoint(components: path)
 
@@ -221,14 +207,12 @@ extension Bryce {
     }
     
     @discardableResult
-    public func request<T: DecodableError>(on endpoint: URLConvertible, method: HTTPMethod = .get, headers: HTTPHeaders? = nil, validate: Bool = true, decodableErrorType: T.Type, /*etagEnabled: Bool = false,*/ result: @escaping VoidDecodableErrorResult<T>) -> DataRequest {
+    public func request<T: DecodableError>(on endpoint: URLConvertible, method: HTTPMethod = .get, headers: HTTPHeaders? = nil, validate: Bool = true, decodableErrorType: T.Type, result: @escaping VoidDecodableErrorResult<T>) -> DataRequest {
         
         let dataRequest = prepareDataRequest(on: endpoint, method: method, headers: headers, validate: validate, etagEnabled: false)
         
         dataRequest.response(queue: self.configuration.responseQueue) { alamofireResponse in
-            
-            EtagManager.storeEtag(endpoint: endpoint, method: method, etagEnabled: false, response: alamofireResponse)
-            
+                        
             self.handleDefaultResponse(alamofireResponse: alamofireResponse, decodableErrorType: decodableErrorType, result: result)
         }
         
@@ -239,14 +223,10 @@ extension Bryce {
 extension Bryce {
     
     private func prepareDataRequest(on endpoint: URLConvertible, method: HTTPMethod, parameters: Parameters? = nil, encoding: ParameterEncoding = URLEncoding.queryString, headers: HTTPHeaders?, validate: Bool, etagEnabled: Bool) -> DataRequest {
-        
-        let headersToSend = EtagManager.headersFrom(endpoint: endpoint, method: method, etagEnabled: etagEnabled, headers: headers)
-        
+                
         var dataRequest: DataRequest
         
-        if etagEnabled && method == .get { dataRequest = self.configuration.session.requestWithoutCache(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headersToSend) }
-            
-        else { dataRequest = self.configuration.session.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headersToSend) }
+        dataRequest = self.configuration.session.request(endpoint, method: method, parameters: parameters, encoding: encoding, headers: headers)
         
         if validate { dataRequest = dataRequest.validate(statusCode: configuration.acceptableStatusCodes) }
         

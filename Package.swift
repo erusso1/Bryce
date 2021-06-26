@@ -14,7 +14,6 @@ let package = Package(
             targets: ["BryceNetworking"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/kishikawakatsumi/KeychainAccess.git", .upToNextMajor(from: "4.1.0")),
         .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.0.0")),
         .package(url: "https://github.com/erusso1/AlamofireNetworkActivityLogger.git", .upToNextMajor(from: "3.0.0")),
     ],
@@ -23,8 +22,7 @@ let package = Package(
             name: "BryceNetworking",
             dependencies: [
                 "Alamofire",
-                "AlamofireNetworkActivityLogger",
-                "KeychainAccess",
+                "AlamofireNetworkActivityLogger"
             ],
             path: "Bryce"),
         .testTarget(

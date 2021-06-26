@@ -37,10 +37,7 @@ extension Bryce {
         }
     }
     
-    public func teardown() {
-        
-        EtagManager.clearEtagMap()
-    }
+    public func teardown() { }
 }
 
 extension Bryce {
@@ -55,67 +52,3 @@ extension Bryce {
         }
     }
 }
-
-//extension Bryce {
-//
-//    private func loadAuthorizationFromKeychain() -> Authorization? {
-//
-//        guard let keychain = self.authorizationKeychain else { return nil }
-//
-//        do {
-//            guard let data = try keychain.getData(authorizationKeychainKey) else { return nil }
-//            let authorization = try JSONDecoder().decode(Authorization.self, from: data)
-//            print("***********************************************")
-//            print("")
-//            print("Bryce loaded authorization from keychain.")
-//            if let expiration = authorization.expiration { print("Authorization expiry: \(expiration)") }
-//            print("")
-//            print("***********************************************")
-//            print("")
-//            return authorization
-//        }
-//
-//        catch { log(.error, "An error occurred loading persisted authorization from Keychain: \(error)"); return nil }
-//    }
-//
-//    private func saveAuthorizationToKeychain(_ authorization: Authorization) {
-//
-//        if let keychain = self.authorizationKeychain {
-//
-//            do {
-//
-//                let data = try JSONEncoder().encode(authorization)
-//                try keychain.set(data, key: authorizationKeychainKey)
-//
-//                print("***********************************************")
-//                print("")
-//                print("Bryce persisted authorization to keychain.")
-//                if let expiration = authorization.expiration { print("Authorization expiry: \(expiration)") }
-//                print("")
-//                print("***********************************************")
-//                print("")
-//            }
-//
-//            catch { log(.error, "An error occurred setting authorization to Keychain: \(error)") }
-//        }
-//    }
-//
-//    private func removeAuthorizationFromKeychain() {
-//
-//        if let keychain = self.authorizationKeychain {
-//
-//            do {
-//                try keychain.remove(authorizationKeychainKey)
-//
-//                print("***********************************************")
-//                print("")
-//                print("Bryce removed authorization from keychain.")
-//                print("")
-//                print("***********************************************")
-//                print("")
-//            }
-//
-//            catch { print("An error occurred removing authorization from Keychain: \(error)") }
-//        }
-//    }
-//}
