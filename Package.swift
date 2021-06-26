@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "BryceNetworking",
+    name: "Bryce",
     platforms: [
         .iOS(.v12),
         .watchOS(.v5),
@@ -10,8 +10,8 @@ let package = Package(
     ],
     products: [
         .library(
-            name: "BryceNetworking",
-            targets: ["BryceNetworking"]),
+            name: "Bryce",
+            targets: ["Bryce"]),
     ],
     dependencies: [
         .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.0.0")),
@@ -19,15 +19,14 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "BryceNetworking",
+            name: "Bryce",
             dependencies: [
                 "Alamofire",
                 "AlamofireNetworkActivityLogger"
-            ],
-            path: "Bryce"),
+            ]),
         .testTarget(
-            name: "BryceNetworkingTests",
-            dependencies: ["BryceNetworking"]),
+            name: "BryceTests",
+            dependencies: ["Bryce"]),
     ],
     swiftLanguageVersions: [.v5]
 )

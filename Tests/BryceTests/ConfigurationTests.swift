@@ -6,7 +6,7 @@
 //
 
 import XCTest
-import BryceNetworking
+import Bryce
 
 class ConfigurationTests: XCTestCase {
     
@@ -17,6 +17,15 @@ class ConfigurationTests: XCTestCase {
         Bryce.use(configuration)
 
         XCTAssertEqual(configuration.timeout, Bryce.configuration.timeout)
+    }
+    
+    func testGlobalURL() {
+        
+        let urlString = "https://jsonplaceholder.typicode.com"
+        
+        Bryce.use(urlString: urlString)
+        
+        XCTAssertEqual(Bryce.url, URL(string: urlString))
     }
     
     func testBasicAuthorization() {
