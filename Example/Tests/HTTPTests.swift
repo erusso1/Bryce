@@ -45,7 +45,8 @@ extension HTTPTests {
     func testRequestSignatures() {
                 
         Bryce.shared.use(Configuration.init(
-            baseUrl: baseURL
+            baseUrl: baseURL,
+            logLevel: .debug
             )
         )
         

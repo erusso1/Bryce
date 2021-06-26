@@ -29,7 +29,7 @@ public class Configuration: NSObject {
     
     public let acceptableStatusCodes: Range<Int>
 
-    public var session: Alamofire.Session
+    public var session: Session
     
     public let responseQueue: DispatchQueue
     

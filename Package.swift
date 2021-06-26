@@ -4,8 +4,9 @@ import PackageDescription
 let package = Package(
     name: "BryceNetworking",
     platforms: [
-        .iOS(.v10),
-        .watchOS(.v4)
+        .iOS(.v12),
+        .watchOS(.v5),
+        .macOS(.v10_12)
     ],
     products: [
         .library(
@@ -14,18 +15,16 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/kishikawakatsumi/KeychainAccess.git", .upToNextMajor(from: "4.1.0")),
-        .package(url: "https://github.com/Alamofire/Alamofire.git", .exact("4.9.1")),
-        .package(url: "https://github.com/erusso1/AlamofireNetworkActivityLogger.git", .exact("2.4.1")),
-        .package(url: "https://github.com/Otbivnoe/CodableAlamofire.git", .exact("1.1.2")),
+        .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.0.0")),
+        .package(url: "https://github.com/erusso1/AlamofireNetworkActivityLogger.git", .upToNextMajor(from: "3.0.0")),
     ],
     targets: [
         .target(
             name: "BryceNetworking",
             dependencies: [
-                "KeychainAccess",
                 "Alamofire",
                 "AlamofireNetworkActivityLogger",
-                "CodableAlamofire"
+                "KeychainAccess",
             ],
             path: "Bryce"),
         .testTarget(
