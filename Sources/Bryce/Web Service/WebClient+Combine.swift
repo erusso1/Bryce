@@ -17,28 +17,28 @@ extension WebClient {
         case unknown
     }
     
-    public func get<E: Encodable, D: Decodable>(_ endpoint: Endpoint, parameters: E?, headers: HTTPHeaders? = nil) -> AnyPublisher<D, Swift.Error> {
+    public func get<E: Encodable, D: Decodable>(_ endpoint: EndpointProviding, parameters: E?, headers: HTTPHeaders? = nil) -> AnyPublisher<D, Swift.Error> {
         
         session
-            .request(url(endpoint: endpoint), method: .get, parameters: parameters, headers: requestHeaders(from: headers))
+            .request(endpoint.url(baseURL: baseURL), method: .get, parameters: parameters, headers: requestHeaders(from: headers))
             .publishDecodable(queue: responseQueue, decoder: responseDecoder)
             .tryCompactMap(mapOutput)
             .eraseToAnyPublisher()
     }
     
-    public func get<D: Decodable>(_ endpoint: Endpoint, headers: HTTPHeaders? = nil) -> AnyPublisher<D, Swift.Error> {
+    public func get<D: Decodable>(_ endpoint: EndpointProviding, headers: HTTPHeaders? = nil) -> AnyPublisher<D, Swift.Error> {
         
         session
-            .request(url(endpoint: endpoint), method: .get, headers: requestHeaders(from: headers))
+            .request(endpoint.url(baseURL: baseURL), method: .get, headers: requestHeaders(from: headers))
             .publishDecodable(queue: responseQueue, decoder: responseDecoder)
             .tryCompactMap(mapOutput)
             .eraseToAnyPublisher()
     }
     
-    public func post<E: Encodable, D: Decodable>(_ endpoint: Endpoint, parameters: E?, headers: HTTPHeaders? = nil) -> AnyPublisher<D, Swift.Error> {
+    public func post<E: Encodable, D: Decodable>(_ endpoint: EndpointProviding, parameters: E?, headers: HTTPHeaders? = nil) -> AnyPublisher<D, Swift.Error> {
         
         session
-            .request(url(endpoint: endpoint), method: .post, parameters: parameters, headers: requestHeaders(from: headers))
+            .request(endpoint.url(baseURL: baseURL), method: .post, parameters: parameters, headers: requestHeaders(from: headers))
             .publishDecodable(queue: responseQueue, decoder: responseDecoder)
             .tryCompactMap(mapOutput)
             .eraseToAnyPublisher()

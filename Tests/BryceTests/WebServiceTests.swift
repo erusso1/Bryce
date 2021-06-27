@@ -47,6 +47,18 @@ class WebServiceTests: XCTestCase {
         
         XCTAssertFalse(posts.isEmpty)
     }
+    
+    func testWebServiceURIParam() throws {
+        
+        let webService = APIPostWebService()
+
+        let postId: Post.ID = 1
+        let commentId = 3
+
+        XCTAssertEqual(webService.$post.uri(.postId, 1).url(baseURL: webService.client.baseURL), URL(string: "https://jsonplaceholder.typicode.com/posts/\(postId)"))
+        
+        XCTAssertEqual(webService.$postComment.uri(.postId, 1).uri(.commentId, commentId).url(baseURL: webService.client.baseURL), URL(string: "https://jsonplaceholder.typicode.com/posts/\(postId)/comments/\(commentId)"))
+    }
 }
 
 extension XCTestCase {
