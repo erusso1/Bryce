@@ -8,10 +8,11 @@
 import Foundation
 import Bryce
 import Combine
+import Alamofire
 
 protocol PostWebService: WebService {
     
-    func getPostsPublisher() -> AnyPublisher<Post, Error>
+    func getPostsPublisher() -> WebPublished<Post>
     
     func getPosts(completion: (Result<Post, Error>) -> Void)
 }
@@ -23,13 +24,9 @@ struct ConcretePostWebService: PostWebService {
     
     var client: WebClient = .init()
         
-    func getPostsPublisher() -> AnyPublisher<Post, Error> {
-        
-        //client.get(endpoint: $posts)
-        
-        Just(Post.fixtures[0])
-            .setFailureType(to: Error.self)
-            .eraseToAnyPublisher()
+    func getPostsPublisher() -> WebPublished<Post> {
+                
+        client.get($posts)
     }
     
     func getPosts(completion: (Result<Post, Error>) -> Void) {

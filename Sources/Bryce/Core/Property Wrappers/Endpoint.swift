@@ -12,12 +12,9 @@ import Alamofire
 public struct Endpoint {
     
     public var wrappedValue: String
-    
-    let url: URL?
-        
-    public init(wrappedValue: String, _ url: URL? = nil) {
+            
+    public init(wrappedValue: String) {
         self.wrappedValue = wrappedValue
-        self.url = url
     }
     
     public var projectedValue: Self {

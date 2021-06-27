@@ -21,7 +21,7 @@ public struct Configuration {
     
     public let customLogger: LogCustomizable?
     
-    public var globalHeaders: [String: String]?
+    public var globalHeaders: HTTPHeaders?
     
     public let acceptableStatusCodes: Range<Int>
 
@@ -37,7 +37,7 @@ public struct Configuration {
         timeout: TimeInterval = 5.0,
         logLevel: NetworkActivityLoggerLevel = .debug,
         customLogger: LogCustomizable? = nil,
-        globalHeaders: [String: String]? = nil,
+        globalHeaders: HTTPHeaders? = nil,
         acceptableStatusCodes: Range<Int> = 200..<400,
         responseQueue: DispatchQueue = .main
         ) {
