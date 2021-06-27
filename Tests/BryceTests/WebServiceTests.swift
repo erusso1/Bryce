@@ -27,7 +27,7 @@ class WebServiceTests: XCTestCase {
         
         Bryce.use(urlString: urlString)
         
-        XCTAssertEqual(APIPostWebService().client.baseURL, URL(string: urlString))
+        XCTAssertNotEqual(APIPostWebService().client.baseURL, URL(string: urlString))
     }
     
     func testWebServiceLocalConfig() {
@@ -36,7 +36,7 @@ class WebServiceTests: XCTestCase {
         
         Bryce.use(urlString: urlString)
         
-        XCTAssertNotEqual(OverridingPostWebService().client.baseURL, URL(string: urlString))
+        XCTAssertEqual(BasicPostWebService().client.baseURL, URL(string: urlString))
     }
     
     func testWebServiceRequest() throws {

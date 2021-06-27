@@ -48,7 +48,9 @@ public enum Bryce {
     }
     
     public static func teardown() {
-        configuration.globalHeaders = nil
+        configuration = .default
+        url = nil
+        use(logLevel: .off)
     }
 }
 

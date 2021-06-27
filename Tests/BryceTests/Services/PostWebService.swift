@@ -35,9 +35,9 @@ struct APIPostWebService: PostWebService {
     }
 }
 
-struct OverridingPostWebService: PostWebService {
+struct BasicPostWebService: PostWebService {
     
-    let client: WebClient = .init(urlString: "https://api.test.com")
+    let client: WebClient = .init()
     
     func getPostsPublisher() -> WebPublished<[Post]> {
         
