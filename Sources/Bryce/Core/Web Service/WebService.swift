@@ -19,8 +19,12 @@ public final class WebClient {
     private var _responseDecoder: DataDecoder?
     private var _responseQueue: DispatchQueue?
     
-    public init(url: URL? = nil, responseDecoder: DataDecoder? = nil, responseQueue: DispatchQueue? = nil) {
-        self.url = url
+    public init(urlString: String? = nil, responseDecoder: DataDecoder? = nil, responseQueue: DispatchQueue? = nil) {
+        if let _urlString = urlString {
+            self.url = URL(string: _urlString)
+        } else {
+            self.url = nil
+        }
         self._responseDecoder = responseDecoder
         self._responseQueue = responseQueue
     }
@@ -30,9 +34,9 @@ extension WebClient {
     
     var session: Session { Bryce.configuration.session }
 
-    var baseURL: URL {
+    public var baseURL: URL {
         guard let url = self.url ?? Bryce.url else {
-            assert(false, "No URL provided. A valid URL instance must be given to either Bryce, \(Self.self)")
+            assert(false, "No URL provided. A valid URL instance must be given to either Bryce or this instance of \(Self.self)")
         }
         return url
     }

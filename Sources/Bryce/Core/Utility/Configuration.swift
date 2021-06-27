@@ -16,9 +16,7 @@ public struct Configuration {
     public let responseDecoder: JSONDecoder
         
     public let timeout: TimeInterval
-    
-    public let logLevel: NetworkActivityLoggerLevel
-    
+        
     public let customLogger: LogCustomizable?
     
     public var globalHeaders: HTTPHeaders?
@@ -35,7 +33,6 @@ public struct Configuration {
         responseDecoder: JSONDecoder = JSONDecoder(),
         securityPolicy: SecurityPolicy = .none,
         timeout: TimeInterval = 5.0,
-        logLevel: NetworkActivityLoggerLevel = .debug,
         customLogger: LogCustomizable? = nil,
         globalHeaders: HTTPHeaders? = nil,
         acceptableStatusCodes: Range<Int> = 200..<400,
@@ -46,7 +43,6 @@ public struct Configuration {
         self.requestEncoder =       requestEncoder
         self.responseDecoder =      responseDecoder
         self.timeout =              timeout
-        self.logLevel =             logLevel
         self.customLogger =         customLogger
         self.globalHeaders =        globalHeaders
         self.acceptableStatusCodes = acceptableStatusCodes

@@ -8,7 +8,7 @@
 
 import Foundation
 
-final class Post: Codable {
+struct Post: Codable, Identifiable, Equatable {
     
     let id: Int
     let userId: Int

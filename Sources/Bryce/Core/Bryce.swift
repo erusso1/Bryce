@@ -18,11 +18,16 @@ public enum Bryce {
     public static func use(_ config: Configuration) {
         
         configuration = config
+    }
+    
+    public static func use(logLevel: NetworkActivityLoggerLevel) {
         
-        NetworkActivityLogger.shared.level = configuration.logLevel
+        NetworkActivityLogger.shared.level = logLevel
         
-        if configuration.logLevel != .off {
+        if logLevel != .off {
             NetworkActivityLogger.shared.startLogging()
+        } else {
+            NetworkActivityLogger.shared.stopLogging()
         }
     }
     
@@ -44,7 +49,6 @@ public enum Bryce {
     
     public static func teardown() {
         configuration.globalHeaders = nil
-        NetworkActivityLogger.shared.stopLogging()
     }
 }
 

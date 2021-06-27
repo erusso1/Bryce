@@ -12,25 +12,42 @@ import Alamofire
 
 protocol PostWebService: WebService {
     
-    func getPostsPublisher() -> WebPublished<Post>
+    func getPostsPublisher() -> WebPublished<[Post]>
     
-    func getPosts(completion: (Result<Post, Error>) -> Void)
+    func getPosts(completion: (Result<[Post], Error>) -> Void)
 }
 
-struct ConcretePostWebService: PostWebService {
+struct APIPostWebService: PostWebService {
     
     @Endpoint
     private var posts = "/posts"
     
-    var client: WebClient = .init()
+    let client: WebClient = .init(urlString: "https://jsonplaceholder.typicode.com")
         
-    func getPostsPublisher() -> WebPublished<Post> {
+    func getPostsPublisher() -> WebPublished<[Post]> {
                 
         client.get($posts)
     }
     
-    func getPosts(completion: (Result<Post, Error>) -> Void) {
+    func getPosts(completion: (Result<[Post], Error>) -> Void) {
         
-        completion(.success(Post.fixtures[0]))
+        completion(.success(Post.fixtures))
+    }
+}
+
+struct OverridingPostWebService: PostWebService {
+    
+    let client: WebClient = .init(urlString: "https://api.test.com")
+    
+    func getPostsPublisher() -> WebPublished<[Post]> {
+        
+        Just(Post.fixtures)
+            .setFailureType(to: Error.self)
+            .eraseToAnyPublisher()
+    }
+    
+    func getPosts(completion: (Result<[Post], Error>) -> Void) {
+        
+        completion(.success(Post.fixtures))
     }
 }
