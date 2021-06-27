@@ -18,7 +18,7 @@ class WebServiceTests: XCTestCase {
     }
     
     override func tearDown() {
-        Bryce.teardown()
+        //Bryce.teardown()
     }
     
     func testWebServiceGlobalConfig() {
@@ -45,7 +45,7 @@ class WebServiceTests: XCTestCase {
         
         let posts = try awaitOutput(webService.getPostsPublisher())
         
-        XCTAssertFalse(posts.isEmpty)
+        XCTAssertFalse(posts.isEmpty)        
     }
     
     func testWebServiceURIParam() throws {
@@ -55,9 +55,9 @@ class WebServiceTests: XCTestCase {
         let postId: Post.ID = 1
         let commentId = 3
 
-        XCTAssertEqual(webService.$post.uri(.postId, 1).url(baseURL: webService.client.baseURL), URL(string: "https://jsonplaceholder.typicode.com/posts/\(postId)"))
+        XCTAssertEqual(webService.client.baseURL.appendingPathComponent("/posts/\(postId)"), URL(string: "https://jsonplaceholder.typicode.com/posts/\(postId)"))
         
-        XCTAssertEqual(webService.$postComment.uri(.postId, 1).uri(.commentId, commentId).url(baseURL: webService.client.baseURL), URL(string: "https://jsonplaceholder.typicode.com/posts/\(postId)/comments/\(commentId)"))
+        XCTAssertEqual(webService.client.baseURL.appendingPathComponent("/posts/\(postId)/comments/\(commentId)"), URL(string: "https://jsonplaceholder.typicode.com/posts/\(postId)/comments/\(commentId)"))
     }
 }
 

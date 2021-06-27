@@ -21,31 +21,20 @@ protocol PostWebService: WebService {
 
 struct APIPostWebService: PostWebService {
     
-    enum PostURIParameterKey: String, URIParameterKey {
-        
-        case postId = "post_id"
-        case commentId = "comment_id"
-    }
-    
-    @Endpoint
-    var posts = "/posts"
-    
-    @Endpoint<PostURIParameterKey>
-    var post = "/posts/:post_id"
-    
-    @Endpoint<PostURIParameterKey>
-    var postComment = "/posts/:post_id/comments/:comment_id"
-    
     let client: WebClient = .init(urlString: "https://jsonplaceholder.typicode.com")
         
     func getPostsPublisher() -> WebPublished<[Post]> {
 
-        client.get($posts)
+        struct Params: Encodable {
+            let foo: String
+        }
+        
+        return get("/posts", parameters: Params(foo: "bar"))
     }
     
     func getPost(id: Post.ID) -> WebPublished<Post> {
         
-        client.get($post.uri(.postId, 1))
+        get("/posts/\(id)")
     }
     
     func getPosts(completion: (Result<[Post], Error>) -> Void) {

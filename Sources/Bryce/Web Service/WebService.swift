@@ -41,6 +41,10 @@ extension WebClient {
         return url
     }
     
+    func endpoint(path: String) -> URL {
+        baseURL.appendingPathComponent(path)
+    }
+    
     func requestHeaders(from headers: HTTPHeaders?) -> HTTPHeaders? {
         
         var headersToSend = headers ?? [:]
