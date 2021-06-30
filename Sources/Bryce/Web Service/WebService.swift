@@ -18,7 +18,7 @@ public final class WebClient {
     private var url: URL?
     private var _responseDecoder: DataDecoder?
     private var _responseQueue: DispatchQueue?
-    
+        
     public init(urlString: String? = nil, responseDecoder: DataDecoder? = nil, responseQueue: DispatchQueue? = nil) {
         if let _urlString = urlString {
             self.url = URL(string: _urlString)
@@ -35,7 +35,7 @@ extension WebClient {
     var session: Session { Bryce.config.session }
 
     public var baseURL: URL {
-        guard let url = self.url ?? Bryce.url else {
+        guard let url = self.url ?? Bryce.config.globalBaseURL else {
             assert(false, "No URL provided. A valid URL instance must be given to either Bryce or this instance of \(Self.self)")
         }
         return url

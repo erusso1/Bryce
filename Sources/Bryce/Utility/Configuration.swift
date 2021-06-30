@@ -11,6 +11,8 @@ import AlamofireNetworkActivityLogger
 
 public final class Configuration {
         
+    public let globalBaseURLString: String?
+    
     public let requestEncoder: JSONEncoder
     
     public let responseDecoder: JSONDecoder
@@ -28,6 +30,7 @@ public final class Configuration {
     public let responseQueue: DispatchQueue
     
     public init(
+        _ globalBaseURLString: String? = nil,
         session: Alamofire.Session = .default,
         requestEncoder: JSONEncoder = JSONEncoder(),
         responseDecoder: JSONDecoder = JSONDecoder(),
@@ -39,6 +42,7 @@ public final class Configuration {
         responseQueue: DispatchQueue = .main
         ) {
         
+        self.globalBaseURLString =  globalBaseURLString
         self.session =              session
         self.requestEncoder =       requestEncoder
         self.responseDecoder =      responseDecoder
@@ -47,6 +51,11 @@ public final class Configuration {
         self.globalHeaders =        globalHeaders
         self.acceptableStatusCodes = acceptableStatusCodes
         self.responseQueue =        responseQueue
+    }
+    
+    public var globalBaseURL: URL? {
+        guard let string = globalBaseURLString else { return nil }
+        return URL(string: string)
     }
 }
 

@@ -44,7 +44,7 @@ public struct NetworkLoggingService: Service {
 
 public final class AuthenticationService: Service {
     
-    public var authentication: Authorization? {
+    var authentication: Authorization? {
         didSet {
             let config = Bryce.config
             var headers = config.globalHeaders ?? [:]
@@ -67,34 +67,30 @@ public final class AuthenticationService: Service {
     }
 }
 
-public extension Bryce {
+extension Bryce {
     
-    static var authentication: AuthenticationService { Resolver.bryce.resolve() }
+    static var authService: AuthenticationService { Resolver.bryce.resolve() }
+    
+    public static var auth: Authorization? {
+        
+        get { authService.authentication }
+        
+        set { authService.authentication = newValue }
+    }
 }
 
 public enum Bryce {
                 
     public static var config: Configuration = .default
-
-    public private(set) static var url: URL?
         
     public static func use<T: Service>(_ service: T) {
         
         Resolver.bryce.register { service }
         service.setup()
     }
-    
-    public static func use(urlString: String) {
-        guard let url = URL(string: urlString) else { return }
-        use(url)
-    }
-    
-    public static func use(_ url: URL) {
-        self.url = url
-    }
-    
+            
     public static func teardown() {
-        url = nil
+        
         config = .default
     }
 }

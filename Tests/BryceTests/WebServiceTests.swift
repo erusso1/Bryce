@@ -27,7 +27,7 @@ class WebServiceTests: XCTestCase {
 
         let urlString = "https://google.com"
         
-        Bryce.use(urlString: urlString)
+        Bryce.config = .init(urlString)
         
         XCTAssertNotEqual(APIPostWebService().client.baseURL, URL(string: urlString))
     }
@@ -36,8 +36,8 @@ class WebServiceTests: XCTestCase {
 
         let urlString = "https://google.com"
         
-        Bryce.use(urlString: urlString)
-        
+        Bryce.config = .init(urlString)
+
         XCTAssertEqual(BasicPostWebService().client.baseURL, URL(string: urlString))
     }
     
