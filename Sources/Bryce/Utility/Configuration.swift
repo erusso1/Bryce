@@ -9,7 +9,7 @@ import Foundation
 import Alamofire
 import AlamofireNetworkActivityLogger
 
-public struct Configuration {
+public final class Configuration {
         
     public let requestEncoder: JSONEncoder
     
@@ -50,7 +50,7 @@ public struct Configuration {
     }
 }
 
-extension Configuration {
+public extension Configuration {
     
-    static let `default`: Configuration = .init()
+    static var `default`: Configuration { .init() }
 }

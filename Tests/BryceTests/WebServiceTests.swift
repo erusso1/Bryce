@@ -8,16 +8,18 @@
 import XCTest
 import Bryce
 import Combine
+import Resolver
 
 class WebServiceTests: XCTestCase {
     
     private var cancellables = Set<AnyCancellable>()
     
     override func setUp() {
-        Bryce.use(logLevel: .debug)
+        Bryce.use(NetworkLoggingService(logLevel: .debug))
     }
     
     override func tearDown() {
+        Resolver.reset()
         Bryce.teardown()
     }
     

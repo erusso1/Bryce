@@ -12,14 +12,14 @@ public enum Authorization {
     
     case basic(username: String, password: String)
     
-    case bearer(token: String)
+    case bearer(token: String, expiration: Date)
     
     static let headerKey = "Authorization"
     
     var headerValue: String {
         switch self {
         case .basic(let username, let password): return "Basic \((username + ":" + password).data(using: .utf8)!.base64EncodedString())"
-        case .bearer(let token): return "Bearer \(token)"
+        case .bearer(let token, _): return "Bearer \(token)"
         }
     }
 }

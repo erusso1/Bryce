@@ -32,7 +32,7 @@ public final class WebClient {
 
 extension WebClient {
     
-    var session: Session { Bryce.configuration.session }
+    var session: Session { Bryce.config.session }
 
     public var baseURL: URL {
         guard let url = self.url ?? Bryce.url else {
@@ -48,18 +48,18 @@ extension WebClient {
     func requestHeaders(from headers: HTTPHeaders?) -> HTTPHeaders? {
         
         var headersToSend = headers ?? [:]
-        if let globalHeaders = Bryce.configuration.globalHeaders {
+        if let globalHeaders = Bryce.config.globalHeaders {
             headersToSend += globalHeaders
         }
         return headersToSend
     }
     
     var responseQueue: DispatchQueue {
-        _responseQueue ?? Bryce.configuration.responseQueue
+        _responseQueue ?? Bryce.config.responseQueue
     }
     
     var responseDecoder: DataDecoder {
-        _responseDecoder ?? Bryce.configuration.responseDecoder
+        _responseDecoder ?? Bryce.config.responseDecoder
     }
 }
 

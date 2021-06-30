@@ -8,20 +8,24 @@
 import Foundation
 import Alamofire
 import AlamofireNetworkActivityLogger
+import Resolver
 
-public enum Bryce {
-            
-    public private(set) static var configuration: Configuration = .default
+public protocol Service {
     
-    public private(set) static var url: URL?
+    func setup()
     
-    public static func use(_ config: Configuration) {
-        
-        configuration = config
+    func teardown()
+}
+
+public struct NetworkLoggingService: Service {
+    
+    let logLevel: NetworkActivityLoggerLevel
+    
+    public init(logLevel: NetworkActivityLoggerLevel) {
+        self.logLevel = logLevel
     }
     
-    public static func use(logLevel: NetworkActivityLoggerLevel) {
-        
+    public func setup() {
         NetworkActivityLogger.shared.level = logLevel
         
         if logLevel != .off {
@@ -31,11 +35,53 @@ public enum Bryce {
         }
     }
     
-    public static func use(_ auth: Authorization) {
+    public func teardown() {
         
-        var headers = configuration.globalHeaders ?? [:]
-        headers[Authorization.headerKey] = auth.headerValue
-        configuration.globalHeaders = headers
+        NetworkActivityLogger.shared.level = .off
+        NetworkActivityLogger.shared.stopLogging()
+    }
+}
+
+public final class AuthenticationService: Service {
+    
+    public var authentication: Authorization? {
+        didSet {
+            let config = Bryce.config
+            var headers = config.globalHeaders ?? [:]
+            let key = Authorization.headerKey
+            if let auth = authentication {
+                headers[key] = auth.headerValue
+            } else {
+                headers[key] = nil
+            }
+            config.globalHeaders = headers
+        }
+    }
+    
+    public init() { }
+    
+    public func setup() { }
+    
+    public func teardown() {
+        authentication = nil
+    }
+}
+
+public extension Bryce {
+    
+    static var authentication: AuthenticationService { Resolver.bryce.resolve() }
+}
+
+public enum Bryce {
+                
+    public static var config: Configuration = .default
+
+    public private(set) static var url: URL?
+        
+    public static func use<T: Service>(_ service: T) {
+        
+        Resolver.bryce.register { service }
+        service.setup()
     }
     
     public static func use(urlString: String) {
@@ -48,15 +94,14 @@ public enum Bryce {
     }
     
     public static func teardown() {
-        configuration = .default
         url = nil
-        use(logLevel: .off)
+        config = .default
     }
 }
 
 func print(prefix: String = "[Bryce]", _ level: LogLevel, _ items: Any...) {
     
-    if let logger = Bryce.configuration.customLogger {
+    if let logger = Bryce.config.customLogger {
         logger.log(prefix, level, items)
     }
     else {
