@@ -18,7 +18,7 @@ class WebServiceTests: XCTestCase {
     }
     
     override func tearDown() {
-        //Bryce.teardown()
+        Bryce.teardown()
     }
     
     func testWebServiceGlobalConfig() {
