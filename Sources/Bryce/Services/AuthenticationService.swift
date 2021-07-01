@@ -10,12 +10,12 @@ import Resolver
 
 public final class AuthenticationService: Service {
     
-    var authentication: Authorization? {
+    var auth: Authentication? {
         didSet {
             let config = Bryce.config
             var headers = config.globalHeaders ?? [:]
-            let key = Authorization.headerKey
-            if let auth = authentication {
+            let key = Authentication.headerKey
+            if let auth = self.auth {
                 headers[key] = auth.headerValue
             } else {
                 headers[key] = nil
@@ -29,7 +29,7 @@ public final class AuthenticationService: Service {
     public func setup() { }
     
     public func teardown() {
-        authentication = nil
+        auth = nil
     }
 }
 
@@ -37,10 +37,10 @@ extension Bryce {
     
     static var authService: AuthenticationService { Resolver.bryce.resolve() }
     
-    public static var auth: Authorization? {
+    public static var auth: Authentication? {
         
-        get { authService.authentication }
+        get { authService.auth }
         
-        set { authService.authentication = newValue }
+        set { authService.auth = newValue }
     }
 }

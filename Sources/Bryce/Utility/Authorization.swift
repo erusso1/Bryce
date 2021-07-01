@@ -8,7 +8,7 @@
 import Alamofire
 import Foundation
 
-public enum Authorization {
+public enum Authentication {
     
     case basic(username: String, password: String)
     
