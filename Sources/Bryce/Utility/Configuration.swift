@@ -18,8 +18,6 @@ public final class Configuration {
     public let responseDecoder: JSONDecoder
         
     public let timeout: TimeInterval
-        
-    public let customLogger: LogCustomizable?
     
     public var globalHeaders: HTTPHeaders?
     
@@ -47,7 +45,6 @@ public final class Configuration {
         self.requestEncoder =       requestEncoder
         self.responseDecoder =      responseDecoder
         self.timeout =              timeout
-        self.customLogger =         customLogger
         self.globalHeaders =        globalHeaders
         self.acceptableStatusCodes = acceptableStatusCodes
         self.responseQueue =        responseQueue
