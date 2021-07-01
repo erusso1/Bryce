@@ -34,7 +34,6 @@ public final class Configuration {
         responseDecoder: JSONDecoder = JSONDecoder(),
         securityPolicy: SecurityPolicy = .none,
         timeout: TimeInterval = 5.0,
-        customLogger: LogCustomizable? = nil,
         globalHeaders: HTTPHeaders? = nil,
         acceptableStatusCodes: Range<Int> = 200..<400,
         responseQueue: DispatchQueue = .main
