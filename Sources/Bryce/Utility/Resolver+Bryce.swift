@@ -10,5 +10,5 @@ import Resolver
 
 public extension Resolver {
     
-    static let bryce = Resolver()
+    internal(set) static var bryce = Resolver()
 }

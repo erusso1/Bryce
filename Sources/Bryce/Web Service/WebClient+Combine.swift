@@ -184,7 +184,13 @@ private extension WebClient {
     
     func mapOutput(_ output: DataResponsePublisher<Data?>.Output) throws {
         if let error = output.error?.underlyingError {
-            throw error
+            if let data = output.data, let decodedError = decodedError(data) {
+                // attempt to decode as decodable error.
+                throw decodedError
+            } else {
+                // otherwise throw the error that was given.
+                throw error
+            }
         }
     }
     
@@ -193,9 +199,25 @@ private extension WebClient {
         if let decodable = output.value {
             return decodable
         } else if let error = output.error?.underlyingError {
-            throw error
+            if let data = output.data, let decodedError = decodedError(data) {
+                // attempt to decode as decodable error.
+                throw decodedError
+            } else {
+                // otherwise throw the error that was given.
+                throw error
+            }
         } else {
             throw Error.unknown
         }
+    }
+    
+    private func decodedError(_ data: Data) -> Swift.Error? {
+        
+        guard let service = Bryce.decodableErrorService else { return nil }
+        
+        let decoder = Bryce.config.responseDecoder
+        
+        do { return try service.decode(data, using: decoder) }
+        catch { return error }
     }
 }

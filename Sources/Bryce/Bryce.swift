@@ -14,12 +14,16 @@ public enum Bryce {
         
     public static func use<T: Service>(_ service: T) {
         
-        Resolver.bryce.register { service }
+        let options = Resolver.bryce.register { service }
+        
+        if service is DecodableErrorProviding {
+            options.implements(DecodableErrorProviding.self)
+        }
         service.setup()
     }
             
     public static func teardown() {
-        
         config = .default
+        Resolver.bryce = Resolver()
     }
 }

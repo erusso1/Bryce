@@ -15,6 +15,10 @@ class ConfigurationTests: XCTestCase {
         Bryce.use(AuthenticationService())
     }
     
+    override func tearDown() {
+        Bryce.teardown()
+    }
+    
     func testSetupConfiguration() {
         
         let timeout: TimeInterval = 3456
