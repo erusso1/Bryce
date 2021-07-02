@@ -11,9 +11,16 @@ import Alamofire
 public protocol WebService {
     
     var client: WebClient { get }
+    
+    var requestModifier: Session.RequestModifier? { get }
 }
 
-public final class WebClient {
+public extension WebService {
+
+    var requestModifier: Session.RequestModifier? { return nil }
+}
+
+public struct WebClient {
     
     private var url: URL?
     private var _responseDecoder: DataDecoder?
@@ -25,21 +32,22 @@ public final class WebClient {
         } else {
             self.url = nil
         }
+        
         self._responseDecoder = responseDecoder
         self._responseQueue = responseQueue
     }
-}
-
-extension WebClient {
     
-    var session: Session { Bryce.config.session }
-
     public var baseURL: URL {
         guard let url = self.url ?? Bryce.config.globalBaseURL else {
             assert(false, "No URL provided. A valid URL instance must be given to either Bryce or this instance of \(Self.self)")
         }
         return url
     }
+}
+
+extension WebClient {
+    
+    var session: Session { Bryce.config.session }
     
     func endpoint(path: String) -> URL {
         baseURL.appendingPathComponent(path)

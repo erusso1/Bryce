@@ -22,6 +22,10 @@ protocol PostWebService: WebService {
 struct APIPostWebService: PostWebService {
     
     let client: WebClient = .init(urlString: "https://jsonplaceholder.typicode.com")
+    
+    var requestModifier: Session.RequestModifier? { modify(request:) }
+    
+    var customHeader: HTTPHeader?
         
     func getPostsPublisher() -> WebPublished<[Post]> {
 
@@ -40,6 +44,12 @@ struct APIPostWebService: PostWebService {
     func getPosts(completion: (Result<[Post], Error>) -> Void) {
         
         completion(.success(Post.fixtures))
+    }
+    
+    func modify(request: inout URLRequest) throws {
+        if let header = customHeader {
+            request.headers.add(header)
+        }
     }
 }
 
