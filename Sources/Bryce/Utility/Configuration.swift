@@ -19,7 +19,7 @@ public final class Configuration {
         
     public let timeout: TimeInterval
     
-    public var globalHeaders: HTTPHeaders?
+    public var globalHeaders: HTTPHeaders
     
     public let acceptableStatusCodes: Range<Int>
 
@@ -34,7 +34,7 @@ public final class Configuration {
         responseDecoder: JSONDecoder = JSONDecoder(),
         securityPolicy: SecurityPolicy = .none,
         timeout: TimeInterval = 5.0,
-        globalHeaders: HTTPHeaders? = nil,
+        globalHeaders: HTTPHeaders = [:],
         acceptableStatusCodes: Range<Int> = 200..<400,
         responseQueue: DispatchQueue = .main
         ) {

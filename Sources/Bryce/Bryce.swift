@@ -24,6 +24,15 @@ public enum Bryce {
             
     public static func teardown() {
         config = .default
+        authService?.teardown()
+        networkLoggingService?.teardown()
         Resolver.bryce = Resolver()
+    }
+}
+
+extension Bryce {
+    
+    static func log(_ items: Any...) {
+        print("[Bryce]:", items)
     }
 }

@@ -33,3 +33,8 @@ public struct NetworkLoggingService: Service {
         NetworkActivityLogger.shared.stopLogging()
     }
 }
+
+extension Bryce {
+    
+    static var networkLoggingService: NetworkLoggingService? { Resolver.bryce.optional() }
+}

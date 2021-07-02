@@ -48,9 +48,7 @@ extension WebClient {
     func requestHeaders(from headers: HTTPHeaders?) -> HTTPHeaders? {
         
         var headersToSend = headers ?? [:]
-        if let globalHeaders = Bryce.config.globalHeaders {
-            headersToSend += globalHeaders
-        }
+        headersToSend += Bryce.config.globalHeaders
         return headersToSend
     }
     
