@@ -22,7 +22,7 @@ class DecodableErrorTests: XCTestCase {
         
         let config = URLSessionConfiguration.default
         config.protocolClasses = [DecodableErrorProtocol.self]
-        Bryce.config.session = Session(configuration: config)
+        Bryce.config = .init(session: Session(configuration: config))
     }
     
     override func tearDown() {

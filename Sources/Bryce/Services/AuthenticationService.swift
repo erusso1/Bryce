@@ -5,9 +5,10 @@
 //  Created by Ephraim Russo on 6/30/21.
 //
 
+import Alamofire
 import Foundation
-import Resolver
 import KeychainAccess
+import Resolver
 
 public final class AuthenticationService: Service {
     
@@ -37,7 +38,7 @@ public final class AuthenticationService: Service {
         }
     }
     
-    private let persistence: Persistence
+    let persistence: Persistence
     
     public init(persistence: Persistence = .memory) {
         self.persistence = persistence
@@ -45,6 +46,22 @@ public final class AuthenticationService: Service {
     
     public func setup() {
         
+        //registerInterceptor()
+        loadAuthFromKeychainIfNeeded()
+    }
+    
+    public func teardown() {
+        auth = nil
+        saveAuthToKeychainIfNeeded()
+    }
+    
+    fileprivate func registerInterceptor() {
+        
+        Bryce.intercept(using: AuthenticationInterceptor())
+    }
+    
+    fileprivate func loadAuthFromKeychainIfNeeded() {
+     
         guard case .keychain = persistence else { return }
 
         do {
@@ -54,11 +71,6 @@ public final class AuthenticationService: Service {
         } catch {
             Bryce.log("Unable to load persisted authentication:", error)
         }
-    }
-    
-    public func teardown() {
-        auth = nil
-        saveAuthToKeychainIfNeeded()
     }
     
     fileprivate func saveAuthToKeychainIfNeeded() {
@@ -98,5 +110,26 @@ extension Bryce {
         
         authService.auth = auth
         authService.saveAuthToKeychainIfNeeded()
+    }
+}
+
+struct AuthenticationInterceptor: RequestInterceptor {
+    
+    func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
+        
+        if let auth = Bryce.authentication {
+            
+            var adaptedRequest = urlRequest
+            
+            switch auth {
+            case .basic(let username, let password):
+                adaptedRequest.headers.add(.authorization(username: username, password: password))
+            case .bearer(let token, _):
+                adaptedRequest.headers.add(.authorization(bearerToken: token))
+            }
+            
+            return completion(.success(adaptedRequest))
+            
+        } else { return completion(.success(urlRequest)) }
     }
 }

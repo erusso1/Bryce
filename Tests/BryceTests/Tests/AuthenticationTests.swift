@@ -86,3 +86,29 @@ class AuthetenticationTests: XCTestCase {
     }
 }
 
+final class AuthenticationURLProtocol: URLProtocol {
+    
+    static var error: CustomError?
+    
+    override class func canInit(with request: URLRequest) -> Bool { true }
+    
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+    
+    override func startLoading() {
+    
+        guard
+            let error = Self.error,
+            let data = try? Bryce.config.requestEncoder.encode(error)
+            else {
+            stopLoading()
+            return
+        }
+        
+        let response = HTTPURLResponse(url: request.url!, statusCode: 403, httpVersion: nil, headerFields: nil)!
+        client?.urlProtocol(self, didLoad: data)
+        client?.urlProtocol(self, didReceive: response as URLResponse, cacheStoragePolicy: .notAllowed)
+        client?.urlProtocolDidFinishLoading(self)
+    }
+    
+    override func stopLoading() { }
+}

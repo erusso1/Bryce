@@ -23,13 +23,13 @@ public final class Configuration {
     
     public let acceptableStatusCodes: Range<Int>
 
-    public var session: Session
+    public let session: Session
     
     public let responseQueue: DispatchQueue
     
     public init(
         _ globalBaseURLString: String? = nil,
-        session: Alamofire.Session = .default,
+        session: Alamofire.Session,
         requestEncoder: JSONEncoder = JSONEncoder(),
         responseDecoder: JSONDecoder = JSONDecoder(),
         securityPolicy: SecurityPolicy = .none,
@@ -47,6 +47,23 @@ public final class Configuration {
         self.globalHeaders =        globalHeaders
         self.acceptableStatusCodes = acceptableStatusCodes
         self.responseQueue =        responseQueue
+    }
+    
+    public convenience init(
+        _ globalBaseURLString: String? = nil,
+        urlSessionConfiguration: URLSessionConfiguration = URLSessionConfiguration.af.default,
+        requestEncoder: JSONEncoder = JSONEncoder(),
+        responseDecoder: JSONDecoder = JSONDecoder(),
+        securityPolicy: SecurityPolicy = .none,
+        timeout: TimeInterval = 5.0,
+        globalHeaders: HTTPHeaders = [:],
+        acceptableStatusCodes: Range<Int> = 200..<400,
+        responseQueue: DispatchQueue = .main
+        ) {
+        
+        let session = Alamofire.Session(configuration: urlSessionConfiguration, interceptor: BryceRequestInterceptor(), serverTrustManager: nil)
+        
+        self.init(globalBaseURLString, session: session, requestEncoder: requestEncoder, responseDecoder: responseDecoder, securityPolicy: securityPolicy, timeout: timeout, globalHeaders: globalHeaders, acceptableStatusCodes: acceptableStatusCodes, responseQueue: responseQueue)
     }
     
     public var globalBaseURL: URL? {
