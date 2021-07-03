@@ -10,42 +10,34 @@ import Foundation
 import Resolver
 
 final class BryceRequestInterceptor: RequestInterceptor {
-        
+    
+    private var interceptors: [RequestInterceptor]? {
+        Array(Bryce.interceptors.values) as? [RequestInterceptor]
+    }
+    
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         
-        guard
-            let interceptors = Array(Bryce.interceptors.values) as? [RequestInterceptor],
-            !interceptors.isEmpty
-        else { return completion(.success(urlRequest)) }
+        adapt(urlRequest, for: session, using: interceptors ?? [], completion: completion)
+    }
+    
+    private func adapt(_ urlRequest: URLRequest,
+                       for session: Session,
+                       using adapters: [RequestAdapter],
+                       completion: @escaping (Result<URLRequest, Error>) -> Void) {
+        var pendingAdapters = adapters
 
-        var adaptedRequest = urlRequest
-        var error: Error?
-        let group = DispatchGroup()
+        guard !pendingAdapters.isEmpty else { completion(.success(urlRequest)); return }
 
-        for interceptor in interceptors {
-            
-            guard error == nil else { break }
-            
-            group.enter()
-            
-            interceptor.adapt(adaptedRequest, for: session) { result in
-                
-                switch result {
-                case .success(let request):
-                    adaptedRequest = request
-                case .failure(let adaptError):
-                    error = adaptError
-                }
-                
-                group.leave()
+        let adapter = pendingAdapters.removeFirst()
+
+        adapter.adapt(urlRequest, for: session) { result in
+            switch result {
+            case let .success(urlRequest):
+                self.adapt(urlRequest, for: session, using: pendingAdapters, completion: completion)
+            case .failure:
+                completion(result)
             }
-          
-            group.wait()
         }
-        
-        if let error = error { return completion(.failure(error)) }
-        
-        else { return completion(.success(adaptedRequest)) }
     }
 }
 
