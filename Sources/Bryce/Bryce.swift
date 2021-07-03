@@ -9,10 +9,18 @@ import Foundation
 import Resolver
 
 public enum Bryce {
+    
+    static var services: [AnyHashable: Any] = [:]
                 
     public static var config: Configuration = .default
         
     public static func use<T: Service>(_ service: T) {
+        
+        guard Thread.isMainThread else { fatalError("Attempted use service while not on the Main Thread.") }
+        
+        let id = ObjectIdentifier(T.self).hashValue
+        
+        services[id] = service
         
         let options = Resolver.bryce.register { service }
         
@@ -23,11 +31,17 @@ public enum Bryce {
     }
             
     public static func teardown() {
-        config = .default
-        authService?.teardown()
-        networkLoggingService?.teardown()
+        
+        services.values
+            .compactMap { $0 as? Service }
+            .forEach { $0.teardown() }
+        
+        services.removeAll()
         interceptors.removeAll()
+
         Resolver.bryce = Resolver()
+        
+        config = .default
     }
 }
 

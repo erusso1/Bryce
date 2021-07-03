@@ -85,7 +85,7 @@ public final class AuthenticationService: Service {
 
 extension Bryce {
     
-    static var authService: AuthenticationService? { Resolver.bryce.optional() }
+    public static var authService: AuthenticationService? { Resolver.bryce.optional() }
     
     public static var authentication: Authentication? { authService?.auth }
     

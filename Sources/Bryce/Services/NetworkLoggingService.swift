@@ -36,5 +36,5 @@ public struct NetworkLoggingService: Service {
 
 extension Bryce {
     
-    static var networkLoggingService: NetworkLoggingService? { Resolver.bryce.optional() }
+    public static var networkLoggingService: NetworkLoggingService? { Resolver.bryce.optional() }
 }

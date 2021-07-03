@@ -10,20 +10,6 @@ import Bryce
 import Alamofire
 import Resolver
 
-struct CustomError: CodableError, Equatable {
-    
-    let reason: String
-    let isFixable: Bool
-}
-
-extension Bryce {
-    static func use(urlProtocol: AnyClass) {
-        let config = URLSessionConfiguration.default
-        config.protocolClasses = [urlProtocol]
-        Bryce.config = .init(urlSessionConfiguration: config)
-    }
-}
-
 class DecodableErrorTests: XCTestCase {
     
     override func setUp() {

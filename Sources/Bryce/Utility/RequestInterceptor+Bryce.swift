@@ -47,7 +47,7 @@ public extension Bryce {
     
     static func intercept<T: RequestInterceptor>(using interceptor: T) {
         
-        guard Thread.isMainThread else { fatalError("Attempted add an interceptor while not a the Main Thread.") }
+        guard Thread.isMainThread else { fatalError("Attempted add an interceptor while not on the Main Thread.") }
         
         let id = ObjectIdentifier(T.self).hashValue
         
