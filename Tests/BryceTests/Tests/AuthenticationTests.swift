@@ -6,13 +6,17 @@
 //
 
 import XCTest
+import Alamofire
 import Bryce
 import KeychainAccess
 
 class AuthetenticationTests: XCTestCase {
     
+    let webService = APIPostWebService()
+
     override func setUp() {
 
+        Bryce.use(urlProtocol: AuthenticationURLProtocol.self)
     }
     
     override func tearDown() {
@@ -29,7 +33,6 @@ class AuthetenticationTests: XCTestCase {
                 
         Bryce.use(AuthenticationService(persistence: .memory))
         Bryce.setAuthentication(.basic(username: "username", password: "password"))
-        XCTAssertEqual(Bryce.config.globalHeaders["Authorization"], "Basic dXNlcm5hbWU6cGFzc3dvcmQ=")
         XCTAssertNotNil(Bryce.authentication)
     }
     
@@ -39,7 +42,6 @@ class AuthetenticationTests: XCTestCase {
 
         let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
         Bryce.setAuthentication(.bearer(token: token, expiration: Date(timeIntervalSinceNow: 3600)))
-        XCTAssertEqual(Bryce.config.globalHeaders["Authorization"], "Bearer \(token)")
         XCTAssertNotNil(Bryce.authentication)
     }
     
@@ -77,35 +79,59 @@ class AuthetenticationTests: XCTestCase {
         XCTAssertNil(data)
     }
     
+    func testAuthenticationInterceptor() throws {
+        
+        let expectation = self.expectation(description: "Awaiting publisher")
+        let expectation2 = self.expectation(description: "Awaiting header validation")
+        
+        Bryce.use(AuthenticationService(persistence: .memory))
+        let auth = Authentication.basic(username: "username", password: "password")
+        Bryce.setAuthentication(auth)
+        
+        AuthenticationURLProtocol.auth = auth
+        AuthenticationURLProtocol.headerValidation = { header in
+            
+            XCTAssertEqual(header, auth.headerValue)
+            expectation2.fulfill()
+        }
+        
+        let cancellable = webService
+            .getPostsPublisher()
+            .sink(receiveCompletion: { _ in
+                    expectation.fulfill()
+                
+            }, receiveValue: { _ in })
+            
+        waitForExpectations(timeout: 10)
+        cancellable.cancel()
+    }
+    
     func testTeardown() {
         Bryce.use(AuthenticationService(persistence: .memory))
         Bryce.setAuthentication(.basic(username: "username", password: "password"))
         Bryce.teardown()
-        XCTAssertEqual(Bryce.config.globalHeaders.dictionary, Configuration.default.globalHeaders.dictionary)
+        XCTAssertTrue(Bryce.interceptors.isEmpty)
         XCTAssertNil(Bryce.authentication)
     }
 }
 
 final class AuthenticationURLProtocol: URLProtocol {
     
-    static var error: CustomError?
+    static var auth: Authentication?
+    
+    static var headerValidation: ((String) -> Void)?
     
     override class func canInit(with request: URLRequest) -> Bool { true }
     
     override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
     
     override func startLoading() {
-    
-        guard
-            let error = Self.error,
-            let data = try? Bryce.config.requestEncoder.encode(error)
-            else {
-            stopLoading()
-            return
+
+        if let value = request.headers.value(for: "Authorization") {
+            Self.headerValidation?(value)
         }
         
         let response = HTTPURLResponse(url: request.url!, statusCode: 403, httpVersion: nil, headerFields: nil)!
-        client?.urlProtocol(self, didLoad: data)
         client?.urlProtocol(self, didReceive: response as URLResponse, cacheStoragePolicy: .notAllowed)
         client?.urlProtocolDidFinishLoading(self)
     }

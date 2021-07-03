@@ -19,13 +19,13 @@ public final class Configuration {
         
     public let timeout: TimeInterval
     
-    public var globalHeaders: HTTPHeaders
-    
     public let acceptableStatusCodes: Range<Int>
 
     public let session: Session
     
     public let responseQueue: DispatchQueue
+    
+    private static let interceptor = BryceRequestInterceptor()
     
     public init(
         _ globalBaseURLString: String? = nil,
@@ -34,7 +34,6 @@ public final class Configuration {
         responseDecoder: JSONDecoder = JSONDecoder(),
         securityPolicy: SecurityPolicy = .none,
         timeout: TimeInterval = 5.0,
-        globalHeaders: HTTPHeaders = [:],
         acceptableStatusCodes: Range<Int> = 200..<400,
         responseQueue: DispatchQueue = .main
         ) {
@@ -44,7 +43,6 @@ public final class Configuration {
         self.requestEncoder =       requestEncoder
         self.responseDecoder =      responseDecoder
         self.timeout =              timeout
-        self.globalHeaders =        globalHeaders
         self.acceptableStatusCodes = acceptableStatusCodes
         self.responseQueue =        responseQueue
     }
@@ -56,14 +54,13 @@ public final class Configuration {
         responseDecoder: JSONDecoder = JSONDecoder(),
         securityPolicy: SecurityPolicy = .none,
         timeout: TimeInterval = 5.0,
-        globalHeaders: HTTPHeaders = [:],
         acceptableStatusCodes: Range<Int> = 200..<400,
         responseQueue: DispatchQueue = .main
         ) {
         
-        let session = Alamofire.Session(configuration: urlSessionConfiguration, interceptor: BryceRequestInterceptor(), serverTrustManager: nil)
+        let session = Alamofire.Session(configuration: urlSessionConfiguration, interceptor: Self.interceptor, serverTrustManager: nil)
         
-        self.init(globalBaseURLString, session: session, requestEncoder: requestEncoder, responseDecoder: responseDecoder, securityPolicy: securityPolicy, timeout: timeout, globalHeaders: globalHeaders, acceptableStatusCodes: acceptableStatusCodes, responseQueue: responseQueue)
+        self.init(globalBaseURLString, session: session, requestEncoder: requestEncoder, responseDecoder: responseDecoder, securityPolicy: securityPolicy, timeout: timeout, acceptableStatusCodes: acceptableStatusCodes, responseQueue: responseQueue)
     }
     
     public var globalBaseURL: URL? {

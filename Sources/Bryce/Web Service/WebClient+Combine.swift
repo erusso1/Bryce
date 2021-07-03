@@ -23,7 +23,7 @@ extension WebClient {
     public func get<E: Encodable, D: Decodable>(_ path: String, parameters: E?, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
         
         session
-            .request(endpoint(path: path), method: .get, parameters: parameters, headers: requestHeaders(from: headers))
+            .request(endpoint(path: path), method: .get, parameters: parameters, headers: headers)
             .publishDecodable(queue: responseQueue, decoder: responseDecoder)
             .tryCompactMap(mapOutput)
             .eraseToAnyPublisher()
@@ -32,7 +32,7 @@ extension WebClient {
     public func get<D: Decodable>(_ path: String, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
         
         session
-            .request(endpoint(path: path), method: .get, headers: requestHeaders(from: headers))
+            .request(endpoint(path: path), method: .get, headers: headers)
             .publishDecodable(queue: responseQueue, decoder: responseDecoder)
             .tryCompactMap(mapOutput)
             .eraseToAnyPublisher()
@@ -41,7 +41,7 @@ extension WebClient {
     public func post<E: Encodable, D: Decodable>(_ path: String, parameters: E?, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
         
         session
-            .request(endpoint(path: path), method: .post, parameters: parameters, headers: requestHeaders(from: headers))
+            .request(endpoint(path: path), method: .post, parameters: parameters, headers: headers)
             .publishDecodable(queue: responseQueue, decoder: responseDecoder)
             .tryCompactMap(mapOutput)
             .eraseToAnyPublisher()
@@ -50,7 +50,7 @@ extension WebClient {
     public func post<D: Decodable>(_ path: String, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
         
         session
-            .request(endpoint(path: path), method: .post, headers: requestHeaders(from: headers))
+            .request(endpoint(path: path), method: .post, headers: headers)
             .publishDecodable(queue: responseQueue, decoder: responseDecoder)
             .tryCompactMap(mapOutput)
             .eraseToAnyPublisher()
@@ -59,7 +59,7 @@ extension WebClient {
     public func post<E: Encodable>(_ path: String, parameters: E?, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<Void> {
         
         session
-            .request(endpoint(path: path), method: .post, parameters: parameters, headers: requestHeaders(from: headers))
+            .request(endpoint(path: path), method: .post, parameters: parameters, headers: headers)
             .publishUnserialized(queue: responseQueue)
             .tryCompactMap(mapOutput)
             .eraseToAnyPublisher()
@@ -68,7 +68,7 @@ extension WebClient {
     public func post(_ path: String, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<Void> {
         
         session
-            .request(endpoint(path: path), method: .post, headers: requestHeaders(from: headers))
+            .request(endpoint(path: path), method: .post, headers: headers)
             .publishUnserialized(queue: responseQueue)
             .tryCompactMap(mapOutput)
             .eraseToAnyPublisher()
@@ -77,7 +77,7 @@ extension WebClient {
     public func put<E: Encodable, D: Decodable>(_ path: String, parameters: E?, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
         
         session
-            .request(endpoint(path: path), method: .put, parameters: parameters, headers: requestHeaders(from: headers))
+            .request(endpoint(path: path), method: .put, parameters: parameters, headers: headers)
             .publishDecodable(queue: responseQueue, decoder: responseDecoder)
             .tryCompactMap(mapOutput)
             .eraseToAnyPublisher()
@@ -86,7 +86,7 @@ extension WebClient {
     public func put<D: Decodable>(_ path: String, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
         
         session
-            .request(endpoint(path: path), method: .put, headers: requestHeaders(from: headers))
+            .request(endpoint(path: path), method: .put, headers: headers)
             .publishDecodable(queue: responseQueue, decoder: responseDecoder)
             .tryCompactMap(mapOutput)
             .eraseToAnyPublisher()
@@ -95,7 +95,7 @@ extension WebClient {
     public func patch<E: Encodable, D: Decodable>(_ path: String, parameters: E?, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
         
         session
-            .request(endpoint(path: path), method: .patch, parameters: parameters, headers: requestHeaders(from: headers))
+            .request(endpoint(path: path), method: .patch, parameters: parameters, headers: headers)
             .publishDecodable(queue: responseQueue, decoder: responseDecoder)
             .tryCompactMap(mapOutput)
             .eraseToAnyPublisher()
@@ -104,7 +104,7 @@ extension WebClient {
     public func patch<D: Decodable>(_ path: String, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
         
         session
-            .request(endpoint(path: path), method: .patch, headers: requestHeaders(from: headers))
+            .request(endpoint(path: path), method: .patch, headers: headers)
             .publishDecodable(queue: responseQueue, decoder: responseDecoder)
             .tryCompactMap(mapOutput)
             .eraseToAnyPublisher()
@@ -113,7 +113,7 @@ extension WebClient {
     public func delete<E: Encodable, D: Decodable>(_ path: String, parameters: E?, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
         
         session
-            .request(endpoint(path: path), method: .delete, parameters: parameters, headers: requestHeaders(from: headers))
+            .request(endpoint(path: path), method: .delete, parameters: parameters, headers: headers)
             .publishDecodable(queue: responseQueue, decoder: responseDecoder)
             .tryCompactMap(mapOutput)
             .eraseToAnyPublisher()
@@ -122,7 +122,7 @@ extension WebClient {
     public func delete<D: Decodable>(_ path: String, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
         
         session
-            .request(endpoint(path: path), method: .delete, headers: requestHeaders(from: headers), requestModifier: requestModifier)
+            .request(endpoint(path: path), method: .delete, headers: headers, requestModifier: requestModifier)
             .publishDecodable(queue: responseQueue, decoder: responseDecoder)
             .tryCompactMap(mapOutput)
             .eraseToAnyPublisher()

@@ -16,13 +16,19 @@ struct CustomError: CodableError, Equatable {
     let isFixable: Bool
 }
 
+extension Bryce {
+    static func use(urlProtocol: AnyClass) {
+        let config = URLSessionConfiguration.default
+        config.protocolClasses = [urlProtocol]
+        Bryce.config = .init(urlSessionConfiguration: config)
+    }
+}
+
 class DecodableErrorTests: XCTestCase {
     
     override func setUp() {
         
-        let config = URLSessionConfiguration.default
-        config.protocolClasses = [DecodableErrorProtocol.self]
-        Bryce.config = .init(session: Session(configuration: config))
+        Bryce.use(urlProtocol: DecodableErrorProtocol.self)
     }
     
     override func tearDown() {

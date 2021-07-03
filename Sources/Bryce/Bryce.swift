@@ -26,6 +26,7 @@ public enum Bryce {
         config = .default
         authService?.teardown()
         networkLoggingService?.teardown()
+        interceptors.removeAll()
         Resolver.bryce = Resolver()
     }
 }

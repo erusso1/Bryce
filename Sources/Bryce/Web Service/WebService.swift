@@ -52,14 +52,7 @@ extension WebClient {
     func endpoint(path: String) -> URL {
         baseURL.appendingPathComponent(path)
     }
-    
-    func requestHeaders(from headers: HTTPHeaders?) -> HTTPHeaders? {
         
-        var headersToSend = headers ?? [:]
-        headersToSend += Bryce.config.globalHeaders
-        return headersToSend
-    }
-    
     var responseQueue: DispatchQueue {
         _responseQueue ?? Bryce.config.responseQueue
     }

@@ -24,19 +24,7 @@ public final class AuthenticationService: Service {
     
     private lazy var keychain: Keychain = { .init() }()
     
-    var auth: Authentication? {
-        didSet {
-            let config = Bryce.config
-            var headers = config.globalHeaders
-            let key = Authentication.headerKey
-            if let auth = self.auth {
-                headers[key] = auth.headerValue
-            } else {
-                headers[key] = nil
-            }
-            config.globalHeaders = headers
-        }
-    }
+    var auth: Authentication?
     
     let persistence: Persistence
     
@@ -46,7 +34,7 @@ public final class AuthenticationService: Service {
     
     public func setup() {
         
-        //registerInterceptor()
+        registerInterceptor()
         loadAuthFromKeychainIfNeeded()
     }
     

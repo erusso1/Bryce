@@ -19,9 +19,9 @@ public enum Authentication: Codable, Equatable {
     
     case bearer(token: String, expiration: Date)
     
-    static let headerKey = "Authorization"
+    public static let headerKey = "Authorization"
     
-    var headerValue: String {
+    public var headerValue: String {
         switch self {
         case .basic(let username, let password): return "Basic \((username + ":" + password).data(using: .utf8)!.base64EncodedString())"
         case .bearer(let token, _): return "Bearer \(token)"
