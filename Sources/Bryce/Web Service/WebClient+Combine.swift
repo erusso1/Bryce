@@ -198,13 +198,13 @@ private extension WebClient {
         
         if let decodable = output.value {
             return decodable
-        } else if let error = output.error?.underlyingError {
+        } else if let error = output.error {
             if let data = output.data, let decodedError = decodedError(data) {
                 // attempt to decode as decodable error.
                 throw decodedError
             } else {
                 // otherwise throw the error that was given.
-                throw error
+                throw error.underlyingError ?? error
             }
         } else {
             throw Error.unknown

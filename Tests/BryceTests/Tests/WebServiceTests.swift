@@ -20,6 +20,8 @@ class WebServiceTests: XCTestCase {
         Bryce.teardown()
     }
     
+    let webService = APIPostWebService()
+    
     func testWebServiceGlobalConfig() {
 
         let urlString = "https://google.com"
@@ -39,9 +41,7 @@ class WebServiceTests: XCTestCase {
     }
     
     func testWebServiceRequest() throws {
-    
-        let webService = APIPostWebService()
-        
+            
         let posts = try awaitOutput(webService.getPostsPublisher())
         
         XCTAssertFalse(posts.isEmpty)        
@@ -49,8 +49,6 @@ class WebServiceTests: XCTestCase {
     
     func testWebServiceURIParam() throws {
         
-        let webService = APIPostWebService()
-
         let postId: Post.ID = 1
         let commentId = 3
 

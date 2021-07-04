@@ -9,6 +9,7 @@ import XCTest
 import Combine
 
 extension XCTestCase {
+    
     func awaitOutput<T: Publisher>(
         _ publisher: T,
         timeout: TimeInterval = 10,
@@ -55,4 +56,6 @@ extension XCTestCase {
 
         return try unwrappedResult.get()
     }
+    
+    static let bundle = Bundle(for: WebServiceTests.self)
 }

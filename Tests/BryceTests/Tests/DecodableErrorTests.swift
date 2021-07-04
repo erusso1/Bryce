@@ -15,6 +15,9 @@ class DecodableErrorTests: XCTestCase {
     override func setUp() {
         
         Bryce.use(urlProtocol: DecodableErrorProtocol.self)
+        
+        DecodableErrorProtocol.customError = nil
+        DecodableErrorProtocol.mismatchedError = nil
     }
     
     override func tearDown() {
@@ -22,66 +25,56 @@ class DecodableErrorTests: XCTestCase {
     }
     
     let webService = APIPostWebService()
+    
+    func testNoServiceRegistrationFails() {
+        
+        let customError = CustomError(reason: "So sad", isFixable: true)
+        
+        DecodableErrorProtocol.customError = customError
 
+        XCTAssertThrowsError(try awaitOutput(webService.getPostsPublisher())) { error in
+                    
+            XCTAssertTrue(error is DecodingError)
+        }
+    }
+    
     func testDecodableErrorDecodes() {
         
         Bryce.use(DecodableErrorService(CustomError.self))
         
-        let expectation = self.expectation(description: "Awaiting publisher")
         let customError = CustomError(reason: "Too bad", isFixable: false)
         
-        DecodableErrorProtocol.error = customError
+        DecodableErrorProtocol.customError = customError
 
-        let cancellable = webService
-            .getPostsPublisher()
-            .sink(receiveCompletion: { comp in
-                
-                switch comp {
-                case .finished:
-                    XCTFail("The request should fail")
-                case .failure(let error):
-                    XCTAssertTrue(error is CustomError)
-                    XCTAssertEqual(error as! CustomError, customError)
-                }
-                
-                expectation.fulfill()
-                
-            }, receiveValue: { _ in })
-            
-        waitForExpectations(timeout: 10)
-        cancellable.cancel()
+        XCTAssertThrowsError(try awaitOutput(webService.getPostsPublisher())) { error in
+                    
+            guard let custom = error as? CustomError else { return XCTFail() }
+            XCTAssertEqual(custom, customError)
+        }
     }
     
-    func testDefaultDecodableError() {
+    func testErrorTypeMismatchFails() {
         
-        let expectation = self.expectation(description: "Awaiting publisher")
-        let customError = CustomError(reason: "So sad", isFixable: true)
+        Bryce.use(DecodableErrorService(CustomError.self))
         
-        DecodableErrorProtocol.error = customError
-
-        let cancellable = webService
-            .getPostsPublisher()
-            .sink(receiveCompletion: { comp in
-                
-                switch comp {
-                case .finished:
-                    XCTFail("The request should fail")
-                case .failure(let error):
-                    XCTAssertTrue(error is DecodingError)
-                }
-                
-                expectation.fulfill()
-                
-            }, receiveValue: { _ in })
-            
-        waitForExpectations(timeout: 10)
-        cancellable.cancel()
+        DecodableErrorProtocol.mismatchedError = MismatchedError(message: "test message")
+        
+        XCTAssertThrowsError(try awaitOutput(webService.getPostsPublisher())) { error in
+                    
+            XCTAssertTrue(error is DecodingError)
+        }
     }
+
 }
 
+struct MismatchedError: CodableError {
+    let message: String
+}
 final class DecodableErrorProtocol: URLProtocol {
     
-    static var error: CustomError?
+    static var customError: CustomError?
+    
+    static var mismatchedError: MismatchedError?
     
     override class func canInit(with request: URLRequest) -> Bool { true }
     
@@ -89,13 +82,16 @@ final class DecodableErrorProtocol: URLProtocol {
     
     override func startLoading() {
     
-        guard
-            let error = Self.error,
-            let data = try? Bryce.config.requestEncoder.encode(error)
-            else {
-            stopLoading()
-            return
-        }
+        if let customError = Self.customError,
+           let data = try? Bryce.config.requestEncoder.encode(customError) {
+            sendResponse(data)
+        } else if let mistmatchedError = Self.mismatchedError,
+                  let data = try? Bryce.config.requestEncoder.encode(mistmatchedError) {
+            sendResponse(data)
+        } else { stopLoading() }
+    }
+    
+    private func sendResponse(_ data: Data) {
         
         let response = HTTPURLResponse(url: request.url!, statusCode: 403, httpVersion: nil, headerFields: nil)!
         client?.urlProtocol(self, didLoad: data)

@@ -29,26 +29,6 @@ public final class Configuration {
     
     public init(
         _ globalBaseURLString: String? = nil,
-        session: Alamofire.Session,
-        requestEncoder: JSONEncoder = JSONEncoder(),
-        responseDecoder: JSONDecoder = JSONDecoder(),
-        securityPolicies: [SecurityPolicy]? = nil,
-        timeout: TimeInterval = 5.0,
-        acceptableStatusCodes: Range<Int> = 200..<400,
-        responseQueue: DispatchQueue = .main
-        ) {
-        
-        self.globalBaseURLString =  globalBaseURLString
-        self.session =              session
-        self.requestEncoder =       requestEncoder
-        self.responseDecoder =      responseDecoder
-        self.timeout =              timeout
-        self.acceptableStatusCodes = acceptableStatusCodes
-        self.responseQueue =        responseQueue
-    }
-    
-    public convenience init(
-        _ globalBaseURLString: String? = nil,
         urlSessionConfiguration: URLSessionConfiguration = URLSessionConfiguration.af.default,
         requestEncoder: JSONEncoder = JSONEncoder(),
         responseDecoder: JSONDecoder = JSONDecoder(),
@@ -60,7 +40,13 @@ public final class Configuration {
         
         let session = Alamofire.Session(configuration: urlSessionConfiguration, interceptor: Self.interceptor, serverTrustManager: trustManager(from: securityPolicies))
         
-        self.init(globalBaseURLString, session: session, requestEncoder: requestEncoder, responseDecoder: responseDecoder, securityPolicies: securityPolicies, timeout: timeout, acceptableStatusCodes: acceptableStatusCodes, responseQueue: responseQueue)
+        self.globalBaseURLString =  globalBaseURLString
+        self.session =              session
+        self.requestEncoder =       requestEncoder
+        self.responseDecoder =      responseDecoder
+        self.timeout =              timeout
+        self.acceptableStatusCodes = acceptableStatusCodes
+        self.responseQueue =        responseQueue
     }
     
     public var globalBaseURL: URL? {
@@ -71,7 +57,7 @@ public final class Configuration {
 
 private func trustManager(from securityPolicies: [SecurityPolicy]?) -> ServerTrustManager? {
     
-    guard let policies = securityPolicies, policies.isEmpty else { return nil }
+    guard let policies = securityPolicies, !policies.isEmpty else { return nil }
 
     var evaluators: [String: ServerTrustEvaluating] = [:]
     
