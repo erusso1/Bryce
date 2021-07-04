@@ -1,4 +1,4 @@
-// swift-tools-version:5.1
+// swift-tools-version:5.3
 import PackageDescription
 
 let package = Package(
@@ -30,7 +30,9 @@ let package = Package(
             ]),
         .testTarget(
             name: "BryceTests",
-            dependencies: ["Bryce"]),
+            dependencies: ["Bryce"],
+            resources: [
+                .process("Resources")]),
     ],
     swiftLanguageVersions: [.v5]
 )

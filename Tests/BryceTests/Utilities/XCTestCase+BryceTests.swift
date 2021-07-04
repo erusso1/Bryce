@@ -56,6 +56,4 @@ extension XCTestCase {
 
         return try unwrappedResult.get()
     }
-    
-    static let bundle = Bundle(for: WebServiceTests.self)
 }
