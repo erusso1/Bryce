@@ -32,7 +32,7 @@ public final class Configuration {
         session: Alamofire.Session,
         requestEncoder: JSONEncoder = JSONEncoder(),
         responseDecoder: JSONDecoder = JSONDecoder(),
-        securityPolicy: SecurityPolicy = .none,
+        securityPolicies: [SecurityPolicy]? = nil,
         timeout: TimeInterval = 5.0,
         acceptableStatusCodes: Range<Int> = 200..<400,
         responseQueue: DispatchQueue = .main
@@ -52,21 +52,35 @@ public final class Configuration {
         urlSessionConfiguration: URLSessionConfiguration = URLSessionConfiguration.af.default,
         requestEncoder: JSONEncoder = JSONEncoder(),
         responseDecoder: JSONDecoder = JSONDecoder(),
-        securityPolicy: SecurityPolicy = .none,
+        securityPolicies: [SecurityPolicy]? = nil,
         timeout: TimeInterval = 5.0,
         acceptableStatusCodes: Range<Int> = 200..<400,
         responseQueue: DispatchQueue = .main
         ) {
         
-        let session = Alamofire.Session(configuration: urlSessionConfiguration, interceptor: Self.interceptor, serverTrustManager: nil)
+        let session = Alamofire.Session(configuration: urlSessionConfiguration, interceptor: Self.interceptor, serverTrustManager: trustManager(from: securityPolicies))
         
-        self.init(globalBaseURLString, session: session, requestEncoder: requestEncoder, responseDecoder: responseDecoder, securityPolicy: securityPolicy, timeout: timeout, acceptableStatusCodes: acceptableStatusCodes, responseQueue: responseQueue)
+        self.init(globalBaseURLString, session: session, requestEncoder: requestEncoder, responseDecoder: responseDecoder, securityPolicies: securityPolicies, timeout: timeout, acceptableStatusCodes: acceptableStatusCodes, responseQueue: responseQueue)
     }
     
     public var globalBaseURL: URL? {
         guard let string = globalBaseURLString else { return nil }
         return URL(string: string)
     }
+}
+
+private func trustManager(from securityPolicies: [SecurityPolicy]?) -> ServerTrustManager? {
+    
+    guard let policies = securityPolicies, policies.isEmpty else { return nil }
+
+    var evaluators: [String: ServerTrustEvaluating] = [:]
+    
+    policies.forEach {
+        let tuple = $0.policy
+        evaluators[tuple.host] = tuple.evaluator
+    }
+    
+    return ServerTrustManager(evaluators: evaluators)
 }
 
 public extension Configuration {
