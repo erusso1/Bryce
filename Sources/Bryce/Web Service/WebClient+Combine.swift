@@ -20,110 +20,192 @@ extension WebClient {
 
 extension WebClient {
     
-    func get<E: Encodable, D: Decodable>(_ path: String, parameters: E, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
+    func get<E, D>(_ path: String,
+                   parameters: E,
+                   headers: HTTPHeaders? = nil,
+                   requestModifier: Session.RequestModifier? = nil) -> WebPublished<D>
+    where E: Encodable, D: Decodable {
         
         session
-            .request(endpoint(path: path), method: .get, parameters: parameters, headers: headers)
-            .publishDecodable(queue: responseQueue, decoder: responseDecoder)
+            .request(endpoint(path: path),
+                     method: .get,
+                     parameters: parameters,
+                     headers: headers)
+            .publishDecodable(queue: responseQueue,
+                              decoder: responseDecoder)
             .tryCompactMap(mapOutput)
             .eraseToAnyPublisher()
     }
     
-    func get<D: Decodable>(_ path: String, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
+    func get<D>(_ path: String,
+                headers: HTTPHeaders? = nil,
+                requestModifier: Session.RequestModifier? = nil) -> WebPublished<D>
+    where D: Decodable {
         
         session
-            .request(endpoint(path: path), method: .get, headers: headers)
-            .publishDecodable(queue: responseQueue, decoder: responseDecoder)
+            .request(endpoint(path: path),
+                     method: .get,
+                     headers: headers)
+            .publishDecodable(queue: responseQueue,
+                              decoder: responseDecoder)
             .tryCompactMap(mapOutput)
             .eraseToAnyPublisher()
     }
     
-    func post<E: Encodable, D: Decodable>(_ path: String, parameters: E, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
+    func post<E, D>(_ path: String,
+              parameters: E,
+              headers: HTTPHeaders? = nil,
+              requestModifier: Session.RequestModifier? = nil) -> WebPublished<D>
+    where E: Encodable, D: Decodable {
         
         session
-            .request(endpoint(path: path), method: .post, parameters: parameters, headers: headers)
-            .publishDecodable(queue: responseQueue, decoder: responseDecoder)
+            .request(endpoint(path: path),
+                     method: .post,
+                     parameters: parameters,
+                     headers: headers)
+            .publishDecodable(queue: responseQueue,
+                              decoder: responseDecoder)
             .tryCompactMap(mapOutput)
             .eraseToAnyPublisher()
     }
     
-    func post<D: Decodable>(_ path: String, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
+    func post<D>(_ path: String,
+                 headers: HTTPHeaders? = nil,
+                 requestModifier: Session.RequestModifier? = nil) -> WebPublished<D>
+    where D: Decodable {
         
         session
-            .request(endpoint(path: path), method: .post, headers: headers)
-            .publishDecodable(queue: responseQueue, decoder: responseDecoder)
+            .request(endpoint(path: path),
+                     method: .post,
+                     headers: headers)
+            .publishDecodable(queue: responseQueue,
+                              decoder: responseDecoder)
             .tryCompactMap(mapOutput)
             .eraseToAnyPublisher()
     }
     
-    func post<E: Encodable>(_ path: String, parameters: E, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<Void> {
+    func post<E>(_ path: String,
+                 parameters: E,
+                 headers: HTTPHeaders? = nil,
+                 requestModifier: Session.RequestModifier? = nil) -> WebPublished<Void>
+    where E: Encodable {
         
         session
-            .request(endpoint(path: path), method: .post, parameters: parameters, headers: headers)
+            .request(endpoint(path: path),
+                     method: .post,
+                     parameters: parameters,
+                     headers: headers)
             .publishUnserialized(queue: responseQueue)
             .tryMap(mapOutput)
             .eraseToAnyPublisher()
     }
     
-    func post(_ path: String, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<Void> {
+    func post(_ path: String,
+              headers: HTTPHeaders? = nil,
+              requestModifier: Session.RequestModifier? = nil) -> WebPublished<Void> {
         
         session
-            .request(endpoint(path: path), method: .post, headers: headers)
+            .request(endpoint(path: path),
+                     method: .post,
+                     headers: headers)
             .publishUnserialized(queue: responseQueue)
             .tryMap(mapOutput)
             .eraseToAnyPublisher()
     }
     
-    func put<E: Encodable, D: Decodable>(_ path: String, parameters: E, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
+    func put<E, D>(_ path: String,
+                   parameters: E,
+                   headers: HTTPHeaders? = nil,
+                   requestModifier: Session.RequestModifier? = nil) -> WebPublished<D>
+    where E: Encodable, D: Decodable {
         
         session
-            .request(endpoint(path: path), method: .put, parameters: parameters, headers: headers)
-            .publishDecodable(queue: responseQueue, decoder: responseDecoder)
+            .request(endpoint(path: path),
+                     method: .put,
+                     parameters: parameters,
+                     headers: headers)
+            .publishDecodable(queue: responseQueue,
+                              decoder: responseDecoder)
             .tryCompactMap(mapOutput)
             .eraseToAnyPublisher()
     }
     
-    func put<D: Decodable>(_ path: String, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
+    func put<D>(_ path: String,
+                headers: HTTPHeaders? = nil,
+                requestModifier: Session.RequestModifier? = nil) -> WebPublished<D>
+    where D: Decodable {
         
         session
-            .request(endpoint(path: path), method: .put, headers: headers)
-            .publishDecodable(queue: responseQueue, decoder: responseDecoder)
+            .request(endpoint(path: path),
+                     method: .put,
+                     headers: headers)
+            .publishDecodable(queue: responseQueue,
+                              decoder: responseDecoder)
             .tryCompactMap(mapOutput)
             .eraseToAnyPublisher()
     }
     
-    func patch<E: Encodable, D: Decodable>(_ path: String, parameters: E, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
+    func patch<E, D>(_ path: String,
+                     parameters: E,
+                     headers: HTTPHeaders? = nil,
+                     requestModifier: Session.RequestModifier? = nil) -> WebPublished<D>
+    where E: Encodable, D: Decodable {
         
         session
-            .request(endpoint(path: path), method: .patch, parameters: parameters, headers: headers)
-            .publishDecodable(queue: responseQueue, decoder: responseDecoder)
+            .request(endpoint(path: path),
+                     method: .patch,
+                     parameters: parameters,
+                     headers: headers)
+            .publishDecodable(queue: responseQueue,
+                              decoder: responseDecoder)
             .tryCompactMap(mapOutput)
             .eraseToAnyPublisher()
     }
     
-    func patch<D: Decodable>(_ path: String, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
+    func patch<D>(_ path: String,
+                  headers: HTTPHeaders? = nil,
+                  requestModifier: Session.RequestModifier? = nil) -> WebPublished<D>
+    where D: Decodable {
         
         session
-            .request(endpoint(path: path), method: .patch, headers: headers)
-            .publishDecodable(queue: responseQueue, decoder: responseDecoder)
+            .request(endpoint(path: path),
+                     method: .patch,
+                     headers: headers)
+            .publishDecodable(queue: responseQueue,
+                              decoder: responseDecoder)
             .tryCompactMap(mapOutput)
             .eraseToAnyPublisher()
     }
     
-    func delete<E: Encodable, D: Decodable>(_ path: String, parameters: E, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
+    func delete<E, D>(_ path: String,
+                      parameters: E,
+                      headers: HTTPHeaders? = nil,
+                      requestModifier: Session.RequestModifier? = nil) -> WebPublished<D>
+    where E: Encodable, D: Decodable {
         
         session
-            .request(endpoint(path: path), method: .delete, parameters: parameters, headers: headers)
-            .publishDecodable(queue: responseQueue, decoder: responseDecoder)
+            .request(endpoint(path: path),
+                     method: .delete,
+                     parameters: parameters,
+                     headers: headers)
+            .publishDecodable(queue: responseQueue,
+                              decoder: responseDecoder)
             .tryCompactMap(mapOutput)
             .eraseToAnyPublisher()
     }
     
-    func delete<D: Decodable>(_ path: String, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
+    func delete<D>(_ path: String,
+                   headers: HTTPHeaders? = nil,
+                   requestModifier: Session.RequestModifier? = nil) -> WebPublished<D>
+    where D: Decodable {
         
         session
-            .request(endpoint(path: path), method: .delete, headers: headers, requestModifier: requestModifier)
-            .publishDecodable(queue: responseQueue, decoder: responseDecoder)
+            .request(endpoint(path: path),
+                     method: .delete,
+                     headers: headers,
+                     requestModifier: requestModifier)
+            .publishDecodable(queue: responseQueue,
+                              decoder: responseDecoder)
             .tryCompactMap(mapOutput)
             .eraseToAnyPublisher()
     }
