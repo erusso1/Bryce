@@ -20,7 +20,7 @@ extension WebClient {
 
 extension WebClient {
     
-    public func get<E: Encodable, D: Decodable>(_ path: String, parameters: E?, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
+    func get<E: Encodable, D: Decodable>(_ path: String, parameters: E, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
         
         session
             .request(endpoint(path: path), method: .get, parameters: parameters, headers: headers)
@@ -29,7 +29,7 @@ extension WebClient {
             .eraseToAnyPublisher()
     }
     
-    public func get<D: Decodable>(_ path: String, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
+    func get<D: Decodable>(_ path: String, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
         
         session
             .request(endpoint(path: path), method: .get, headers: headers)
@@ -38,7 +38,7 @@ extension WebClient {
             .eraseToAnyPublisher()
     }
     
-    public func post<E: Encodable, D: Decodable>(_ path: String, parameters: E?, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
+    func post<E: Encodable, D: Decodable>(_ path: String, parameters: E, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
         
         session
             .request(endpoint(path: path), method: .post, parameters: parameters, headers: headers)
@@ -47,7 +47,7 @@ extension WebClient {
             .eraseToAnyPublisher()
     }
     
-    public func post<D: Decodable>(_ path: String, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
+    func post<D: Decodable>(_ path: String, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
         
         session
             .request(endpoint(path: path), method: .post, headers: headers)
@@ -56,25 +56,25 @@ extension WebClient {
             .eraseToAnyPublisher()
     }
     
-    public func post<E: Encodable>(_ path: String, parameters: E?, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<Void> {
+    func post<E: Encodable>(_ path: String, parameters: E, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<Void> {
         
         session
             .request(endpoint(path: path), method: .post, parameters: parameters, headers: headers)
             .publishUnserialized(queue: responseQueue)
-            .tryCompactMap(mapOutput)
+            .tryMap(mapOutput)
             .eraseToAnyPublisher()
     }
     
-    public func post(_ path: String, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<Void> {
+    func post(_ path: String, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<Void> {
         
         session
             .request(endpoint(path: path), method: .post, headers: headers)
             .publishUnserialized(queue: responseQueue)
-            .tryCompactMap(mapOutput)
+            .tryMap(mapOutput)
             .eraseToAnyPublisher()
     }
     
-    public func put<E: Encodable, D: Decodable>(_ path: String, parameters: E?, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
+    func put<E: Encodable, D: Decodable>(_ path: String, parameters: E, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
         
         session
             .request(endpoint(path: path), method: .put, parameters: parameters, headers: headers)
@@ -83,7 +83,7 @@ extension WebClient {
             .eraseToAnyPublisher()
     }
     
-    public func put<D: Decodable>(_ path: String, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
+    func put<D: Decodable>(_ path: String, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
         
         session
             .request(endpoint(path: path), method: .put, headers: headers)
@@ -92,7 +92,7 @@ extension WebClient {
             .eraseToAnyPublisher()
     }
     
-    public func patch<E: Encodable, D: Decodable>(_ path: String, parameters: E?, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
+    func patch<E: Encodable, D: Decodable>(_ path: String, parameters: E, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
         
         session
             .request(endpoint(path: path), method: .patch, parameters: parameters, headers: headers)
@@ -101,7 +101,7 @@ extension WebClient {
             .eraseToAnyPublisher()
     }
     
-    public func patch<D: Decodable>(_ path: String, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
+    func patch<D: Decodable>(_ path: String, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
         
         session
             .request(endpoint(path: path), method: .patch, headers: headers)
@@ -110,7 +110,7 @@ extension WebClient {
             .eraseToAnyPublisher()
     }
     
-    public func delete<E: Encodable, D: Decodable>(_ path: String, parameters: E?, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
+    func delete<E: Encodable, D: Decodable>(_ path: String, parameters: E, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
         
         session
             .request(endpoint(path: path), method: .delete, parameters: parameters, headers: headers)
@@ -119,7 +119,7 @@ extension WebClient {
             .eraseToAnyPublisher()
     }
     
-    public func delete<D: Decodable>(_ path: String, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
+    func delete<D: Decodable>(_ path: String, headers: HTTPHeaders? = nil, requestModifier: Session.RequestModifier? = nil) -> WebPublished<D> {
         
         session
             .request(endpoint(path: path), method: .delete, headers: headers, requestModifier: requestModifier)
@@ -131,7 +131,7 @@ extension WebClient {
 
 extension WebService {
     
-    public func get<E: Encodable, D: Decodable>(_ path: String, parameters: E?, headers: HTTPHeaders? = nil) -> WebPublished<D> {
+    public func get<E: Encodable, D: Decodable>(_ path: String, parameters: E, headers: HTTPHeaders? = nil) -> WebPublished<D> {
         client.get(path, parameters: parameters, headers: headers, requestModifier: requestModifier)
     }
     
@@ -139,7 +139,7 @@ extension WebService {
         client.get(path, headers: headers, requestModifier: requestModifier)
     }
     
-    public func post<E: Encodable, D: Decodable>(_ path: String, parameters: E?, headers: HTTPHeaders? = nil) -> WebPublished<D> {
+    public func post<E: Encodable, D: Decodable>(_ path: String, parameters: E, headers: HTTPHeaders? = nil) -> WebPublished<D> {
         client.post(path, parameters: parameters, headers: headers, requestModifier: requestModifier)
     }
     
@@ -147,7 +147,7 @@ extension WebService {
         client.post(path, headers: headers, requestModifier: requestModifier)
     }
     
-    public func post<E: Encodable>(_ path: String, parameters: E?, headers: HTTPHeaders? = nil) -> WebPublished<Void> {
+    public func post<E: Encodable>(_ path: String, parameters: E, headers: HTTPHeaders? = nil) -> WebPublished<Void> {
         client.post(path, parameters: parameters, headers: headers, requestModifier: requestModifier)
     }
     
@@ -155,7 +155,7 @@ extension WebService {
         client.post(path, headers: headers, requestModifier: requestModifier)
     }
     
-    public func put<E: Encodable, D: Decodable>(_ path: String, parameters: E?, headers: HTTPHeaders? = nil) -> WebPublished<D> {
+    public func put<E: Encodable, D: Decodable>(_ path: String, parameters: E, headers: HTTPHeaders? = nil) -> WebPublished<D> {
         client.put(path, parameters: parameters, headers: headers, requestModifier: requestModifier)
     }
     
@@ -163,7 +163,7 @@ extension WebService {
         client.put(path, headers: headers, requestModifier: requestModifier)
     }
     
-    public func patch<E: Encodable, D: Decodable>(_ path: String, parameters: E?, headers: HTTPHeaders? = nil) -> WebPublished<D> {
+    public func patch<E: Encodable, D: Decodable>(_ path: String, parameters: E, headers: HTTPHeaders? = nil) -> WebPublished<D> {
         client.patch(path, parameters: parameters, headers: headers, requestModifier: requestModifier)
     }
     
@@ -171,7 +171,7 @@ extension WebService {
         client.patch(path, headers: headers, requestModifier: requestModifier)
     }
     
-    public func delete<E: Encodable, D: Decodable>(_ path: String, parameters: E?, headers: HTTPHeaders? = nil) -> WebPublished<D> {
+    public func delete<E: Encodable, D: Decodable>(_ path: String, parameters: E, headers: HTTPHeaders? = nil) -> WebPublished<D> {
         client.delete(path, parameters: parameters, headers: headers, requestModifier: requestModifier)
     }
     
@@ -182,42 +182,7 @@ extension WebService {
 
 private extension WebClient {
     
-    func mapOutput(_ output: DataResponsePublisher<Data?>.Output) throws {
-        if let error = output.error?.underlyingError {
-            if let data = output.data, let decodedError = decodedError(data) {
-                // attempt to decode as decodable error.
-                throw decodedError
-            } else {
-                // otherwise throw the error that was given.
-                throw error
-            }
-        }
-    }
+    func mapOutput(_ output: DataResponsePublisher<Data?>.Output) throws { try output.mapOutput() }
     
-    func mapOutput<D: Decodable>(_ output: DataResponsePublisher<D>.Output) throws -> D {
-        
-        if let decodable = output.value {
-            return decodable
-        } else if let error = output.error {
-            if let data = output.data, let decodedError = decodedError(data) {
-                // attempt to decode as decodable error.
-                throw decodedError
-            } else {
-                // otherwise throw the error that was given.
-                throw error.underlyingError ?? error
-            }
-        } else {
-            throw Error.unknown
-        }
-    }
-}
-
-func decodedError(_ data: Data) -> Swift.Error? {
-    
-    guard let service = Bryce.decodableErrorService else { return nil }
-    
-    let decoder = Bryce.config.responseDecoder
-    
-    do { return try service.decode(data, using: decoder) }
-    catch { return error }
+    func mapOutput<D: Decodable>(_ output: DataResponsePublisher<D>.Output) throws -> D { try output.mapOutput() }
 }
