@@ -37,7 +37,7 @@ class WebServiceTests: XCTestCase {
         
         Bryce.config = .init(urlString)
 
-        XCTAssertEqual(BasicPostWebService().client.baseURL, URL(string: urlString))
+        XCTAssertEqual(FixturesPostWebService().client.baseURL, URL(string: urlString))
     }
     
     func testWebServiceRequest() throws {

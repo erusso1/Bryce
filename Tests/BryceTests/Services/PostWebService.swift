@@ -10,16 +10,16 @@ import Bryce
 import Combine
 import Alamofire
 
-protocol PostWebService: WebService {
+protocol PostWebService {
     
     func getPostsPublisher() -> WebPublished<[Post]>
     
     func getPost(id: Post.ID) -> WebPublished<Post>
     
-    func getPosts(completion: (Result<[Post], Error>) -> Void)
+    func getPosts(completion: @escaping WebResult<[Post]>)
 }
 
-struct APIPostWebService: PostWebService {
+struct APIPostWebService: PostWebService, WebService {
     
     let client: WebClient = .init(urlString: "https://jsonplaceholder.typicode.com")
     
@@ -41,9 +41,9 @@ struct APIPostWebService: PostWebService {
         get("/posts/\(id)")
     }
     
-    func getPosts(completion: (Result<[Post], Error>) -> Void) {
+    func getPosts(completion: @escaping WebResult<[Post]>) {
         
-        completion(.success(Post.fixtures))
+        get("/posts", completion: completion)
     }
     
     func modify(request: inout URLRequest) throws {
@@ -53,7 +53,7 @@ struct APIPostWebService: PostWebService {
     }
 }
 
-struct BasicPostWebService: PostWebService {
+struct FixturesPostWebService: PostWebService {
     
     let client: WebClient = .init()
     

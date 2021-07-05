@@ -51,3 +51,16 @@ extension DataResponse where Success: Decodable, Failure == AFError {
         }
     }
 }
+
+extension DataResponse where Success == Data?, Failure == AFError {
+    
+    func handleVoid(_ completion: WebResult<Void>) {
+     
+        do {
+            let _ = try mapOutput()
+            completion(.success(()))
+        } catch {
+            completion(.failure(error))
+        }
+    }
+}

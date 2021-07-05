@@ -20,7 +20,7 @@ extension WebClient {
 
 extension WebClient {
     
-    func get<E, D>(_ path: String,
+    public func get<E, D>(_ path: String,
                    parameters: E,
                    headers: HTTPHeaders? = nil,
                    requestModifier: Session.RequestModifier? = nil) -> WebPublished<D>
@@ -37,7 +37,7 @@ extension WebClient {
             .eraseToAnyPublisher()
     }
     
-    func get<D>(_ path: String,
+    public func get<D>(_ path: String,
                 headers: HTTPHeaders? = nil,
                 requestModifier: Session.RequestModifier? = nil) -> WebPublished<D>
     where D: Decodable {
@@ -52,7 +52,7 @@ extension WebClient {
             .eraseToAnyPublisher()
     }
     
-    func post<E, D>(_ path: String,
+    public func post<E, D>(_ path: String,
               parameters: E,
               headers: HTTPHeaders? = nil,
               requestModifier: Session.RequestModifier? = nil) -> WebPublished<D>
@@ -69,7 +69,7 @@ extension WebClient {
             .eraseToAnyPublisher()
     }
     
-    func post<D>(_ path: String,
+    public func post<D>(_ path: String,
                  headers: HTTPHeaders? = nil,
                  requestModifier: Session.RequestModifier? = nil) -> WebPublished<D>
     where D: Decodable {
@@ -84,7 +84,7 @@ extension WebClient {
             .eraseToAnyPublisher()
     }
     
-    func post<E>(_ path: String,
+    public func post<E>(_ path: String,
                  parameters: E,
                  headers: HTTPHeaders? = nil,
                  requestModifier: Session.RequestModifier? = nil) -> WebPublished<Void>
@@ -100,7 +100,7 @@ extension WebClient {
             .eraseToAnyPublisher()
     }
     
-    func post(_ path: String,
+    public func post(_ path: String,
               headers: HTTPHeaders? = nil,
               requestModifier: Session.RequestModifier? = nil) -> WebPublished<Void> {
         
@@ -113,7 +113,7 @@ extension WebClient {
             .eraseToAnyPublisher()
     }
     
-    func put<E, D>(_ path: String,
+    public func put<E, D>(_ path: String,
                    parameters: E,
                    headers: HTTPHeaders? = nil,
                    requestModifier: Session.RequestModifier? = nil) -> WebPublished<D>
@@ -130,7 +130,7 @@ extension WebClient {
             .eraseToAnyPublisher()
     }
     
-    func put<D>(_ path: String,
+    public func put<D>(_ path: String,
                 headers: HTTPHeaders? = nil,
                 requestModifier: Session.RequestModifier? = nil) -> WebPublished<D>
     where D: Decodable {
@@ -145,7 +145,7 @@ extension WebClient {
             .eraseToAnyPublisher()
     }
     
-    func patch<E, D>(_ path: String,
+    public func patch<E, D>(_ path: String,
                      parameters: E,
                      headers: HTTPHeaders? = nil,
                      requestModifier: Session.RequestModifier? = nil) -> WebPublished<D>
@@ -162,7 +162,7 @@ extension WebClient {
             .eraseToAnyPublisher()
     }
     
-    func patch<D>(_ path: String,
+    public func patch<D>(_ path: String,
                   headers: HTTPHeaders? = nil,
                   requestModifier: Session.RequestModifier? = nil) -> WebPublished<D>
     where D: Decodable {
@@ -177,7 +177,7 @@ extension WebClient {
             .eraseToAnyPublisher()
     }
     
-    func delete<E, D>(_ path: String,
+    public func delete<E, D>(_ path: String,
                       parameters: E,
                       headers: HTTPHeaders? = nil,
                       requestModifier: Session.RequestModifier? = nil) -> WebPublished<D>
@@ -194,7 +194,7 @@ extension WebClient {
             .eraseToAnyPublisher()
     }
     
-    func delete<D>(_ path: String,
+    public func delete<D>(_ path: String,
                    headers: HTTPHeaders? = nil,
                    requestModifier: Session.RequestModifier? = nil) -> WebPublished<D>
     where D: Decodable {
