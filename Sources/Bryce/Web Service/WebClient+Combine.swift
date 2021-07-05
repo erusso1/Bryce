@@ -210,14 +210,14 @@ private extension WebClient {
             throw Error.unknown
         }
     }
+}
+
+func decodedError(_ data: Data) -> Swift.Error? {
     
-    private func decodedError(_ data: Data) -> Swift.Error? {
-        
-        guard let service = Bryce.decodableErrorService else { return nil }
-        
-        let decoder = Bryce.config.responseDecoder
-        
-        do { return try service.decode(data, using: decoder) }
-        catch { return error }
-    }
+    guard let service = Bryce.decodableErrorService else { return nil }
+    
+    let decoder = Bryce.config.responseDecoder
+    
+    do { return try service.decode(data, using: decoder) }
+    catch { return error }
 }
